@@ -5,1209 +5,384 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#00A82D">
-<title>NoteVault</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
-<style>
-:root {
-  --green-900: #004D16;
-  --green-800: #006B1F;
-  --green-700: #008A28;
-  --green-600: #00A82D;
-  --green-500: #2DB84D;
-  --green-400: #5CC872;
-  --green-300: #8DD89A;
-  --green-200: #BDE8C4;
-  --green-100: #E0F5E3;
-  --green-50: #F0FAF2;
-  --gray-900: #1A1D1B;
-  --gray-800: #2D302E;
-  --gray-700: #444845;
-  --gray-600: #5C615D;
-  --gray-500: #7A7F7B;
-  --gray-400: #9CA09D;
-  --gray-300: #BFC2C0;
-  --gray-200: #DFE1E0;
-  --gray-100: #EDEEEE;
-  --gray-50: #F6F7F6;
-  --white: #FFFFFF;
-  --red-500: #E53935;
-  --red-100: #FFEBEE;
-  --amber-500: #F9A825;
-  --amber-100: #FFF8E1;
-  --blue-500: #1E88E5;
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--gray-100);
-  color: var(--gray-900);
-  overscroll-behavior: none;
-  -webkit-font-smoothing: antialiased;
-}
-
-#root {
-  max-width: 480px;
-  margin: 0 auto;
-  min-height: 100dvh;
-  background: var(--white);
-  position: relative;
-  overflow-x: hidden;
-}
-
-#loading-fallback {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100dvh;
-  max-width: 480px;
-  margin: 0 auto;
-  background: var(--white);
-  font-family: 'DM Sans', sans-serif;
-}
-
-#loading-fallback .spinner {
-  width: 40px; height: 40px;
-  border: 3px solid var(--green-200);
-  border-top-color: var(--green-600);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-#loading-fallback p { margin-top: 16px; color: var(--gray-500); font-size: 14px; }
-
-#error-fallback {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100dvh;
-  max-width: 480px;
-  margin: 0 auto;
-  background: var(--white);
-  padding: 24px;
-  text-align: center;
-  font-family: 'DM Sans', sans-serif;
-}
-
-#error-fallback h2 { color: var(--red-500); margin-bottom: 8px; }
-#error-fallback p { color: var(--gray-600); font-size: 14px; }
-
-.fade-in { animation: fadeIn 0.25s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-.slide-up { animation: slideUp 0.3s cubic-bezier(0.32,0.72,0,1); }
-@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-.slide-right { animation: slideRight 0.25s cubic-bezier(0.32,0.72,0,1); }
-@keyframes slideRight { from { transform: translateX(100%); opacity:0.5; } to { transform: translateX(0); opacity:1; } }
-
-input, textarea, button, select { font-family: inherit; }
-
-::-webkit-scrollbar { width: 0; }
-</style>
+<meta name="theme-color" content="#0a0e17">
+<title>Ultimate Productivity App</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0e17;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow-x:hidden}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#0a0e17}::-webkit-scrollbar-thumb{background:#1e2640;border-radius:4px}input,textarea,button{font-family:inherit}input:disabled,textarea:disabled{opacity:0.6}.notification{position:fixed;top:20px;right:20px;background:#10b981;color:#fff;padding:16px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.4);z-index:2000;animation:slideIn 0.3s ease}@keyframes slideIn{from{transform:translateX(400px);opacity:0}to{transform:translateX(0);opacity:1}}</style>
 </head>
 <body>
-<div id="root">
-  <div id="loading-fallback">
-    <div class="spinner"></div>
-    <p>Loading NoteVault...</p>
-  </div>
+<div id="root"></div>
+<script src="https://unpkg.com/react@19/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@19/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const{useState,useEffect,useCallback,useMemo,createContext,useContext}=React;
+
+// ===== COLORS & CONSTANTS =====
+const C={bg:'#0a0e17',card:'#13182a',border:'#1e2640',inputBg:'#181f35',text:'#e2e8f0',sub:'#7c8aa0',accent:'#64ffda',danger:'#ff6b6b',green:'#10b981',purple:'#8b5cf6',orange:'#f59e0b'};
+const MOODS=['😊','😐','😔','😡','😴','🤩'];
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const JOURNAL_PROMPTS=['What went well today?','What did you learn?','What are you grateful for?','How can tomorrow be better?','One highlight from today...','What challenged you?','Something that made you smile...'];
+const CATEGORY_COLORS=['#10b981','#8b5cf6','#f59e0b','#3b82f6','#ef4444','#ec4899','#06b6d4','#84cc16'];
+const DEFAULT_CATEGORIES=[
+{id:'fitness',name:'Fitness',icon:'💪',color:'#10b981',days:7,tasks:['Workout','Meal 1','Meal 2','Meal 3','Calories','Protein']},
+{id:'emotional',name:'Emotional',icon:'🧠',color:'#8b5cf6',days:7,tasks:['Journal','Family/Friend','Match']},
+{id:'financial',name:'Financial',icon:'💰',color:'#f59e0b',days:6,tasks:['Work','Log Hours','Next Step']}
+];
+
+const SK='ultimate_pwa_v3';
+
+// ===== UTILITY FUNCTIONS =====
+function getWeekId(date){const d=date||new Date();const target=new Date(d.valueOf());const dayNr=(d.getDay()+6)%7;target.setDate(target.getDate()-dayNr+3);const jan4=new Date(target.getFullYear(),0,4);const dayDiff=(target.getTime()-jan4.getTime())/86400000;const weekNr=1+Math.round((dayDiff-3+((jan4.getDay()+6)%7))/7);return`${target.getFullYear()}-W${String(weekNr).padStart(2,'0')}`}
+function getWeekStart(weekId){const p=weekId.split('-W');const y=parseInt(p[0]);const w=parseInt(p[1]);const j=new Date(y,0,4);const jd=(j.getDay()+6)%7;const ws=new Date(j);ws.setDate(j.getDate()-jd+(w-1)*7);return ws}
+function getTodayIndex(){const d=new Date().getDay();return d===0?6:d-1}
+function initWeekData(cats){const t={};for(const c of cats){t[c.id]={};for(const task of c.tasks)t[c.id][task]=new Array(c.days).fill(false)}return{tasks:t,logs:{},meta:{stars:0,reflection:'',focus:''},notes:{}}}
+function ensureWeek(data,wid){if(!data.weeks[wid])data.weeks[wid]=initWeekData(data.categories);for(const c of data.categories){if(!data.weeks[wid].tasks[c.id])data.weeks[wid].tasks[c.id]={};for(const t of c.tasks){if(!data.weeks[wid].tasks[c.id][t])data.weeks[wid].tasks[c.id][t]=new Array(c.days).fill(false)}}if(!data.weeks[wid].meta)data.weeks[wid].meta={stars:0,reflection:'',focus:''};if(!data.weeks[wid].logs)data.weeks[wid].logs={};if(!data.weeks[wid].notes)data.weeks[wid].notes={};return data}
+function getCategoryScore(wd,cat){const ct=wd.tasks[cat.id]||{};let d=0,total=0;for(const t of cat.tasks){const a=ct[t]||[];for(let i=0;i<cat.days;i++){total++;if(a[i])d++}}return{done:d,total,pct:total>0?Math.round((d/total)*100):0}}
+function getOverallScore(wd,cats){let d=0,t=0;for(const c of cats){const s=getCategoryScore(wd,c);d+=s.done;t+=s.total}return{done:d,total:t,pct:t>0?Math.round((d/t)*100):0}}
+function calcStreak(data){let streak=0;let checkDate=new Date();for(let i=0;i<365;i++){const wid=getWeekId(checkDate);ensureWeek(data,wid);const wd=data.weeks[wid];const score=getOverallScore(wd,data.categories);if(score.pct>=50){streak++}else break;checkDate.setDate(checkDate.getDate()-1)}return streak}
+function loadD(){try{const r=localStorage.getItem(SK);if(r){const d=JSON.parse(r);if(!d.categories||!d.weeks)return getDefault();if(!d.player)d.player={xp:0};if(!d.goals)d.goals=[];if(!d.streakData)d.streakData={current:0,best:0};if(!d.reminders)d.reminders=[];if(!d.notificationTime)d.notificationTime='09:00';return d}}catch(e){}return getDefault()}
+function getDefault(){return{categories:DEFAULT_CATEGORIES.map(c=>({...c,tasks:[...c.tasks]})),weeks:{},player:{xp:0},goals:[],streakData:{current:0,best:0},reminders:[],notificationTime:'09:00'}}
+function saveD(d){try{localStorage.setItem(SK,JSON.stringify(d))}catch(e){}}
+
+// ===== CONTEXT =====
+const DC=createContext(null);
+function DP({children}){
+const[data,setData]=useState(getDefault);
+const[selWeek,setSelWeek]=useState(getWeekId());
+const[loaded,setLoaded]=useState(false);
+const[notification,setNotification]=useState(null);
+const cw=getWeekId();
+
+useEffect(()=>{const d=loadD();ensureWeek(d,cw);setData({...d});saveD(d);setLoaded(true);checkReminders(d);},[]);
+
+const checkReminders=(d)=>{const now=new Date();const hours=String(now.getHours()).padStart(2,'0');const mins=String(now.getMinutes()).padStart(2,'0');const time=`${hours}:${mins}`;if(time===d.notificationTime||Math.abs(now.getHours()-parseInt(d.notificationTime.split(':')[0]))<1){ensureWeek(d,cw);const wd=d.weeks[cw];const score=getOverallScore(wd,d.categories);showNotif(`📊 Daily reminder! Score: ${score.pct}%`)}};
+
+const currentStreak=useMemo(()=>calcStreak(data),[data]);
+const bestStreak=useMemo(()=>data.streakData?.best||0,[data]);
+
+const toggleTask=useCallback((catId,task,dayIdx)=>{setData(prev=>{let nx={...prev,weeks:{...prev.weeks}};ensureWeek(nx,selWeek);const wd={...nx.weeks[selWeek]};if(!wd.tasks[catId])wd.tasks[catId]={};if(!wd.tasks[catId][task]){const c=nx.categories.find(x=>x.id===catId);wd.tasks[catId][task]=new Array(c?.days||7).fill(false)}wd.tasks[catId]={...wd.tasks[catId]};wd.tasks[catId][task]=[...wd.tasks[catId][task]];wd.tasks[catId][task][dayIdx]=!wd.tasks[catId][task][dayIdx];wd.tasks={...wd.tasks};nx.weeks[selWeek]=wd;const newStreak=calcStreak(nx);nx.streakData={current:newStreak,best:Math.max(bestStreak,newStreak)};saveD(nx);return nx})},[selWeek,bestStreak]);
+
+const setLog=useCallback((di,k,v)=>{setData(prev=>{let nx={...prev,weeks:{...prev.weeks}};ensureWeek(nx,selWeek);const logs={...nx.weeks[selWeek].logs};const ol=logs[di]||{};logs[di]={...ol,[k]:v};nx.weeks[selWeek]={...nx.weeks[selWeek],logs};saveD(nx);return nx})},[selWeek]);
+
+const setNote=useCallback((di,catId,task,note)=>{setData(prev=>{let nx={...prev,weeks:{...prev.weeks}};ensureWeek(nx,selWeek);const notes={...nx.weeks[selWeek].notes};const key=`${di}_${catId}_${task}`;notes[key]=note;nx.weeks[selWeek]={...nx.weeks[selWeek],notes};saveD(nx);return nx})},[selWeek]);
+
+const addGoal=useCallback((goal)=>{setData(prev=>{const nx={...prev,goals:[...prev.goals,{id:Date.now(),createdAt:new Date().toISOString(),...goal}]};saveD(nx);return nx})},[]);
+
+const updateGoal=useCallback((goalId,progress)=>{setData(prev=>{const nx={...prev,goals:prev.goals.map(g=>g.id===goalId?{...g,progress}:g)};saveD(nx);return nx})},[]);
+
+const setReminder=useCallback((time)=>{setData(prev=>{const nx={...prev,notificationTime:time};saveD(nx);showNotif('⏰ Reminder set for '+time);return nx})},[]);
+
+const showNotif=(msg)=>{setNotification(msg);setTimeout(()=>setNotification(null),3000)};
+
+const exportPDF=useCallback(()=>{const doc=new jsPDF();doc.setFontSize(16);doc.text('📊 Productivity Report',10,10);doc.setFontSize(12);let y=20;doc.text(`Week: ${selWeek}`,10,y);y+=10;for(const cat of data.categories){const wd=data.weeks[selWeek]||{};const cs=getCategoryScore(wd,cat);doc.text(`${cat.icon} ${cat.name}: ${cs.pct}%`,10,y);y+=8}doc.save('productivity-report.pdf');showNotif('📥 PDF exported!');},[data,selWeek]);
+
+const context={data,selWeek,setSelWeek,loaded,toggleTask,setLog,setNote,addGoal,updateGoal,currentStreak,bestStreak,setReminder,exportPDF,notification};
+return<DC.Provider value={context}>{children}</DC.Provider>
+}
+const useD=()=>useContext(DC);
+
+// ===== HEATMAP COMPONENT =====
+function HeatmapView(){
+const{data,loaded}=useD();
+if(!loaded)return null;
+const weeks=Object.keys(data.weeks).sort().slice(-12);
+const getColor=(score)=>{if(score>=80)return'#10b981';if(score>=60)return'#64ffda';if(score>=40)return'#f59e0b';return'#ef4444'};
+return(<div style={{padding:'16px'}}>
+<h3 style={{fontSize:'16px',fontWeight:'700',color:C.text,marginBottom:'12px'}}>🔥 Activity Heatmap (Last 12 Weeks)</h3>
+<div style={{background:C.card,borderRadius:'12px',padding:'12px',border:`1px solid ${C.border}`,overflowX:'auto'}}>
+<div style={{display:'grid',gridTemplateColumns:`repeat(${weeks.length},1fr)`,gap:'4px'}}>
+{weeks.map(wid=>{const wd=data.weeks[wid]||{};const score=getOverallScore(wd,data.categories).pct;return(<div key={wid} title={`Week ${wid}: ${score}%`} style={{width:'16px',height:'16px',background:getColor(score),borderRadius:'4px',border:`1px solid ${C.border}`,cursor:'pointer'}}/>)})}
 </div>
-<div id="error-fallback">
-  <h2>Something went wrong</h2>
-  <p id="error-msg">The app failed to load. Try refreshing.</p>
+<div style={{marginTop:'12px',fontSize:'10px',color:C.sub,display:'flex',gap:'12px',flexWrap:'wrap'}}>
+<div><span style={{display:'inline-block',width:'12px',height:'12px',background:'#10b981',borderRadius:'2px',marginRight:'4px'}}/>Excellent</div>
+<div><span style={{display:'inline-block',width:'12px',height:'12px',background:'#64ffda',borderRadius:'2px',marginRight:'4px'}}/>Good</div>
+<div><span style={{display:'inline-block',width:'12px',height:'12px',background:'#f59e0b',borderRadius:'2px',marginRight:'4px'}}/>Okay</div>
+<div><span style={{display:'inline-block',width:'12px',height:'12px',background:'#ef4444',borderRadius:'2px',marginRight:'4px'}}/>Low</div>
+</div>
+</div>
+</div>)}
+
+// ===== HOME DASHBOARD =====
+function HomeTab(){
+const{data,selWeek,loaded,toggleTask,currentStreak,bestStreak,exportPDF,notification,setReminder}=useD();
+const cw=getWeekId();
+ensureWeek(data,cw);
+const wd=data.weeks[cw];
+const score=getOverallScore(wd,data.categories);
+const today=getTodayIndex();
+const todayLogs=wd.logs[today]||{};
+const[showSettings,setShowSettings]=useState(false);
+const[reminderTime,setReminderTime]=useState(data.notificationTime||'09:00');
+if(!loaded)return<div style={{padding:'20px',textAlign:'center',color:C.sub}}>Loading...</div>;
+return(<div style={{padding:'16px',minHeight:'100vh',backgroundColor:C.bg,paddingBottom:80}}>
+{notification&&<div className="notification">{notification}</div>}
+<div style={{textAlign:'center',marginBottom:'20px'}}>
+<h1 style={{fontSize:'28px',fontWeight:'800',color:C.text,margin:0}}>📊 Today</h1>
+<p style={{fontSize:'12px',color:C.sub,margin:'4px 0 0'}}>🚀 Ultimate Productivity</p>
 </div>
 
-<script type="text/babel" data-presets="react">
-const { useState, useEffect, useCallback, useMemo, createContext, useContext, useRef } = React;
-
-// ─── Icons (inline SVG components) ───
-const Icons = {
-  Home: () => <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
-  Search: ({size=24}) => <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
-  Plus: () => <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
-  Explore: () => <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>,
-  Settings: () => <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.32 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>,
-  Back: () => <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>,
-  Pin: ({filled}) => filled ? <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 2l5 5-3.2 3.2 1.2 4.8-2.8 2.8-3.2-4.8L8.4 17.6 6.4 15.6l4.6-4.6L6.2 7.8 9 5l4.8 1.2z"/></svg> : <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M16 2l5 5-3.2 3.2 1.2 4.8-2.8 2.8-3.2-4.8L8.4 17.6 6.4 15.6l4.6-4.6L6.2 7.8 9 5l4.8 1.2z"/></svg>,
-  Star: ({filled}) => filled ? <svg width="20" height="20" viewBox="0 0 24 24" fill="#F9A825"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> : <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>,
-  Trash: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>,
-  Restore: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>,
-  Bold: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z"/><path d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z"/></svg>,
-  Italic: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>,
-  List: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg>,
-  OrderedList: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><text x="3" y="8" fontSize="8" fill="currentColor" stroke="none" fontFamily="sans-serif">1</text><text x="3" y="14" fontSize="8" fill="currentColor" stroke="none" fontFamily="sans-serif">2</text><text x="3" y="20" fontSize="8" fill="currentColor" stroke="none" fontFamily="sans-serif">3</text></svg>,
-  Heading: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 4v16"/><path d="M18 4v16"/><path d="M6 12h12"/></svg>,
-  Check: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>,
-  Tag: () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>,
-  Notebook: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>,
-  Close: () => <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
-  More: () => <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>,
-  Download: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
-  Upload: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>,
-  Chart: () => <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>,
-  Template: () => <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>,
-  Filter: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>,
-  Folder: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>,
-  Edit: () => <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
-  DeletePerm: () => <svg width="20" height="20" fill="none" stroke="var(--red-500)" strokeWidth="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>,
-};
-
-// ─── Data Context ───
-const STORAGE_KEY = 'notevault_data';
-const defaultData = {
-  notes: [],
-  notebooks: ['Personal', 'Work', 'Ideas'],
-  tags: ['important', 'todo', 'reference'],
-};
-
-const DataContext = createContext();
-
-function generateId() {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2,6);
-}
-
-function DataProvider({ children }) {
-  const [data, setData] = useState(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return { ...defaultData, ...parsed };
-      }
-    } catch(e) {}
-    return defaultData;
-  });
-
-  useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
-  }, [data]);
-
-  const addNote = useCallback((note) => {
-    const newNote = {
-      id: generateId(),
-      title: '',
-      content: '',
-      notebook: 'Personal',
-      tags: [],
-      pinned: false,
-      favorite: false,
-      trashed: false,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      ...note,
-    };
-    setData(d => ({ ...d, notes: [newNote, ...d.notes] }));
-    return newNote.id;
-  }, []);
-
-  const updateNote = useCallback((id, updates) => {
-    setData(d => ({
-      ...d,
-      notes: d.notes.map(n => n.id === id ? { ...n, ...updates, updatedAt: Date.now() } : n)
-    }));
-  }, []);
-
-  const trashNote = useCallback((id) => {
-    setData(d => ({
-      ...d,
-      notes: d.notes.map(n => n.id === id ? { ...n, trashed: true, updatedAt: Date.now() } : n)
-    }));
-  }, []);
-
-  const restoreNote = useCallback((id) => {
-    setData(d => ({
-      ...d,
-      notes: d.notes.map(n => n.id === id ? { ...n, trashed: false, updatedAt: Date.now() } : n)
-    }));
-  }, []);
-
-  const deleteNotePermanently = useCallback((id) => {
-    setData(d => ({ ...d, notes: d.notes.filter(n => n.id !== id) }));
-  }, []);
-
-  const emptyTrash = useCallback(() => {
-    setData(d => ({ ...d, notes: d.notes.filter(n => !n.trashed) }));
-  }, []);
-
-  const addNotebook = useCallback((name) => {
-    if (name && !data.notebooks.includes(name)) {
-      setData(d => ({ ...d, notebooks: [...d.notebooks, name] }));
-    }
-  }, [data.notebooks]);
-
-  const deleteNotebook = useCallback((name) => {
-    setData(d => ({
-      ...d,
-      notebooks: d.notebooks.filter(n => n !== name),
-      notes: d.notes.map(n => n.notebook === name ? { ...n, notebook: 'Personal' } : n),
-    }));
-  }, []);
-
-  const addTag = useCallback((tag) => {
-    const t = tag.toLowerCase().trim();
-    if (t && !data.tags.includes(t)) {
-      setData(d => ({ ...d, tags: [...d.tags, t] }));
-    }
-  }, [data.tags]);
-
-  const deleteTag = useCallback((tag) => {
-    setData(d => ({
-      ...d,
-      tags: d.tags.filter(t => t !== tag),
-      notes: d.notes.map(n => ({ ...n, tags: n.tags.filter(t => t !== tag) })),
-    }));
-  }, []);
-
-  const exportData = useCallback(() => {
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `notevault-backup-${new Date().toISOString().slice(0,10)}.json`;
-    a.click(); URL.revokeObjectURL(url);
-  }, [data]);
-
-  const importData = useCallback((json) => {
-    try {
-      const parsed = JSON.parse(json);
-      if (parsed.notes) {
-        setData({ ...defaultData, ...parsed });
-        return true;
-      }
-    } catch(e) {}
-    return false;
-  }, []);
-
-  const value = useMemo(() => ({
-    ...data, addNote, updateNote, trashNote, restoreNote,
-    deleteNotePermanently, emptyTrash, addNotebook, deleteNotebook,
-    addTag, deleteTag, exportData, importData,
-  }), [data, addNote, updateNote, trashNote, restoreNote, deleteNotePermanently, emptyTrash, addNotebook, deleteNotebook, addTag, deleteTag, exportData, importData]);
-
-  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
-}
-
-function useData() { return useContext(DataContext); }
-
-// ─── Shared styles ───
-const S = {
-  header: {
-    position: 'sticky', top: 0, zIndex: 20,
-    background: 'var(--green-600)',
-    color: 'white',
-    paddingTop: 'calc(12px + var(--safe-top))',
-    paddingBottom: 12,
-    paddingLeft: 16, paddingRight: 16,
-  },
-  headerTitle: {
-    fontFamily: "'Source Serif 4', serif",
-    fontSize: 22, fontWeight: 700,
-  },
-  card: {
-    background: 'var(--white)',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 10,
-    border: '1px solid var(--gray-100)',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-    cursor: 'pointer',
-    transition: 'box-shadow 0.2s',
-  },
-  cardTitle: {
-    fontSize: 16, fontWeight: 600,
-    color: 'var(--gray-900)',
-    marginBottom: 4,
-    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-  },
-  cardPreview: {
-    fontSize: 13, color: 'var(--gray-500)',
-    lineHeight: 1.4,
-    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-  },
-  tagChip: {
-    display: 'inline-flex', alignItems: 'center', gap: 3,
-    fontSize: 11, fontWeight: 500,
-    background: 'var(--green-100)',
-    color: 'var(--green-700)',
-    padding: '2px 8px',
-    borderRadius: 99,
-    marginRight: 4, marginTop: 6,
-  },
-  btn: {
-    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-    minWidth: 44, minHeight: 44,
-    border: 'none', background: 'none', cursor: 'pointer',
-    color: 'inherit', borderRadius: 10,
-  },
-  btnPrimary: {
-    background: 'var(--green-600)', color: 'white',
-    border: 'none', borderRadius: 10,
-    padding: '12px 20px', fontSize: 15, fontWeight: 600,
-    cursor: 'pointer', minHeight: 44,
-  },
-  content: {
-    paddingBottom: 'calc(72px + var(--safe-bottom))',
-    minHeight: '100dvh',
-  },
-};
-
-// ─── Utility: strip HTML for preview ───
-function stripHtml(html) {
-  if (!html) return '';
-  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-}
-
-function formatDate(ts) {
-  const d = new Date(ts);
-  const now = new Date();
-  const diff = now - d;
-  if (diff < 60000) return 'Just now';
-  if (diff < 3600000) return Math.floor(diff/60000) + 'm ago';
-  if (diff < 86400000) return Math.floor(diff/3600000) + 'h ago';
-  if (diff < 604800000) return Math.floor(diff/86400000) + 'd ago';
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
-// ─── Note Card ───
-function NoteCard({ note, onClick }) {
-  const preview = stripHtml(note.content);
-  return (
-    <div style={S.card} onClick={onClick} className="fade-in">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={S.cardTitle}>{note.title || 'Untitled Note'}</div>
-          <div style={S.cardPreview}>{preview || 'No content'}</div>
-        </div>
-        <div style={{ display: 'flex', gap: 2, marginLeft: 8, flexShrink: 0, paddingTop: 2 }}>
-          {note.pinned && <span style={{ color: 'var(--green-600)' }}><Icons.Pin filled /></span>}
-          {note.favorite && <Icons.Star filled />}
-        </div>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-          {note.tags.slice(0,3).map(t => (
-            <span key={t} style={S.tagChip}><Icons.Tag />{t}</span>
-          ))}
-        </div>
-        <span style={{ fontSize: 11, color: 'var(--gray-400)' }}>{formatDate(note.updatedAt)}</span>
-      </div>
-    </div>
-  );
-}
-
-// ─── Rich Text Editor ───
-function RichEditor({ content, onChange, autoFocus }) {
-  const editorRef = useRef(null);
-  const lastContent = useRef(content);
-
-  useEffect(() => {
-    if (editorRef.current && content !== lastContent.current) {
-      editorRef.current.innerHTML = content || '';
-      lastContent.current = content;
-    }
-  }, [content]);
-
-  useEffect(() => {
-    if (autoFocus && editorRef.current) {
-      setTimeout(() => editorRef.current.focus(), 100);
-    }
-  }, [autoFocus]);
-
-  const handleInput = useCallback(() => {
-    const html = editorRef.current.innerHTML;
-    lastContent.current = html;
-    onChange(html);
-  }, [onChange]);
-
-  const exec = useCallback((cmd, val) => {
-    document.execCommand(cmd, false, val || null);
-    editorRef.current.focus();
-    handleInput();
-  }, [handleInput]);
-
-  const toolBtn = (icon, cmd, val) => (
-    <button style={{ ...S.btn, width: 38, height: 38, color: 'var(--gray-700)' }}
-      onMouseDown={e => e.preventDefault()} onClick={() => exec(cmd, val)}>
-      {icon}
-    </button>
-  );
-
-  return (
-    <div>
-      <div style={{
-        display: 'flex', gap: 2, padding: '6px 8px',
-        borderBottom: '1px solid var(--gray-100)',
-        overflowX: 'auto', flexWrap: 'nowrap',
-        background: 'var(--gray-50)', borderRadius: '10px 10px 0 0',
-        position: 'sticky', top: 0, zIndex: 5,
-      }}>
-        {toolBtn(<Icons.Bold />, 'bold')}
-        {toolBtn(<Icons.Italic />, 'italic')}
-        {toolBtn(<Icons.Heading />, 'formatBlock', '<h2>')}
-        {toolBtn(<Icons.List />, 'insertUnorderedList')}
-        {toolBtn(<Icons.OrderedList />, 'insertOrderedList')}
-        {toolBtn(<Icons.Check />, 'insertHTML', '<div style="display:flex;align-items:center;gap:6px"><input type="checkbox" style="width:18px;height:18px;accent-color:var(--green-600)"><span>Task</span></div>')}
-      </div>
-      <div
-        ref={editorRef}
-        contentEditable
-        suppressContentEditableWarning
-        onInput={handleInput}
-        dangerouslySetInnerHTML={{ __html: content || '' }}
-        style={{
-          minHeight: 300, padding: 16, outline: 'none',
-          fontSize: 15, lineHeight: 1.7,
-          color: 'var(--gray-800)',
-          fontFamily: "'Source Serif 4', serif",
-        }}
-      />
-    </div>
-  );
-}
-
-// ─── Note Editor Screen ───
-function NoteEditor({ noteId, onBack }) {
-  const { notes, updateNote, trashNote, addTag, tags } = useData();
-  const note = notes.find(n => n.id === noteId);
-  const [showMenu, setShowMenu] = useState(false);
-  const [showTagInput, setShowTagInput] = useState(false);
-  const [tagInput, setTagInput] = useState('');
-
-  if (!note) return null;
-
-  const toggleTag = (tag) => {
-    const newTags = note.tags.includes(tag)
-      ? note.tags.filter(t => t !== tag)
-      : [...note.tags, tag];
-    updateNote(noteId, { tags: newTags });
-  };
-
-  const handleAddTag = () => {
-    const t = tagInput.toLowerCase().trim();
-    if (t) {
-      addTag(t);
-      if (!note.tags.includes(t)) updateNote(noteId, { tags: [...note.tags, t] });
-      setTagInput('');
-      setShowTagInput(false);
-    }
-  };
-
-  return (
-    <div className="slide-right" style={{ position: 'absolute', inset: 0, zIndex: 30, background: 'var(--white)' }}>
-      {/* Editor Header */}
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '12px 8px', paddingTop: 'calc(12px + var(--safe-top))',
-        borderBottom: '1px solid var(--gray-100)',
-        background: 'var(--white)', position: 'sticky', top: 0, zIndex: 10,
-      }}>
-        <button style={S.btn} onClick={onBack}><Icons.Back /></button>
-        <div style={{ display: 'flex', gap: 4 }}>
-          <button style={{ ...S.btn, color: note.pinned ? 'var(--green-600)' : 'var(--gray-400)' }}
-            onClick={() => updateNote(noteId, { pinned: !note.pinned })}>
-            <Icons.Pin filled={note.pinned} />
-          </button>
-          <button style={{ ...S.btn, color: note.favorite ? 'var(--amber-500)' : 'var(--gray-400)' }}
-            onClick={() => updateNote(noteId, { favorite: !note.favorite })}>
-            <Icons.Star filled={note.favorite} />
-          </button>
-          <button style={{ ...S.btn, color: 'var(--gray-500)' }} onClick={() => setShowMenu(!showMenu)}>
-            <Icons.More />
-          </button>
-        </div>
-      </div>
-
-      {/* Dropdown Menu */}
-      {showMenu && (
-        <div style={{
-          position: 'absolute', right: 16, top: 'calc(56px + var(--safe-top))',
-          background: 'var(--white)', borderRadius: 12, padding: 8,
-          boxShadow: '0 8px 30px rgba(0,0,0,0.12)', zIndex: 50,
-          minWidth: 180, border: '1px solid var(--gray-100)',
-        }}>
-          <button style={{ ...S.btn, width: '100%', justifyContent: 'flex-start', gap: 10, padding: '10px 12px', fontSize: 14, color: 'var(--gray-700)' }}
-            onClick={() => { setShowMenu(false); setShowTagInput(!showTagInput); }}>
-            <Icons.Tag /> Manage Tags
-          </button>
-          <button style={{ ...S.btn, width: '100%', justifyContent: 'flex-start', gap: 10, padding: '10px 12px', fontSize: 14, color: 'var(--red-500)' }}
-            onClick={() => { trashNote(noteId); onBack(); }}>
-            <Icons.Trash /> Move to Trash
-          </button>
-        </div>
-      )}
-
-      {/* Notebook selector */}
-      <div style={{ padding: '8px 16px', borderBottom: '1px solid var(--gray-50)', display: 'flex', alignItems: 'center', gap: 8 }}>
-        <Icons.Folder />
-        <select value={note.notebook} onChange={e => updateNote(noteId, { notebook: e.target.value })}
-          style={{
-            border: 'none', background: 'none', fontSize: 13, fontWeight: 500,
-            color: 'var(--green-700)', padding: '4px 0', outline: 'none', cursor: 'pointer',
-          }}>
-          {useData().notebooks.map(nb => <option key={nb} value={nb}>{nb}</option>)}
-        </select>
-      </div>
-
-      {/* Tags */}
-      <div style={{ padding: '6px 16px', display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
-        {note.tags.map(t => (
-          <span key={t} style={{ ...S.tagChip, cursor: 'pointer' }} onClick={() => toggleTag(t)}>
-            <Icons.Tag />{t} ×
-          </span>
-        ))}
-        {showTagInput ? (
-          <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-            <input value={tagInput} onChange={e => setTagInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleAddTag()}
-              placeholder="tag name"
-              autoFocus
-              style={{
-                border: '1px solid var(--green-300)', borderRadius: 6, padding: '4px 8px',
-                fontSize: 12, width: 100, outline: 'none',
-              }} />
-            <button onClick={handleAddTag} style={{ fontSize: 12, color: 'var(--green-600)', background: 'none', border: 'none', fontWeight: 600, cursor: 'pointer' }}>Add</button>
-          </div>
-        ) : (
-          <button style={{ ...S.tagChip, background: 'var(--gray-100)', color: 'var(--gray-500)', cursor: 'pointer', border: 'none' }}
-            onClick={() => setShowTagInput(true)}>+ tag</button>
-        )}
-      </div>
-
-      {/* Available tags */}
-      {showTagInput && tags.filter(t => !note.tags.includes(t)).length > 0 && (
-        <div style={{ padding: '0 16px 8px', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-          {tags.filter(t => !note.tags.includes(t)).map(t => (
-            <button key={t} onClick={() => toggleTag(t)}
-              style={{ ...S.tagChip, background: 'var(--gray-50)', color: 'var(--gray-600)', cursor: 'pointer', border: '1px dashed var(--gray-300)' }}>
-              + {t}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Title */}
-      <div style={{ padding: '12px 16px 0' }}>
-        <input
-          value={note.title}
-          onChange={e => updateNote(noteId, { title: e.target.value })}
-          placeholder="Note title"
-          style={{
-            border: 'none', outline: 'none', width: '100%',
-            fontSize: 22, fontWeight: 700,
-            fontFamily: "'Source Serif 4', serif",
-            color: 'var(--gray-900)',
-          }}
-        />
-      </div>
-
-      {/* Editor */}
-      <div style={{ padding: '0 16px 120px' }}>
-        <RichEditor
-          content={note.content}
-          onChange={(html) => updateNote(noteId, { content: html })}
-        />
-      </div>
-    </div>
-  );
-}
-
-// ─── Home Tab ───
-function HomeTab({ onOpenNote }) {
-  const { notes, addNote } = useData();
-  const [filter, setFilter] = useState('all');
-  const activeNotes = useMemo(() => notes.filter(n => !n.trashed), [notes]);
-
-  const filtered = useMemo(() => {
-    let list = activeNotes;
-    if (filter === 'pinned') list = list.filter(n => n.pinned);
-    if (filter === 'favorites') list = list.filter(n => n.favorite);
-    // sort: pinned first, then by updatedAt
-    return list.sort((a, b) => {
-      if (a.pinned !== b.pinned) return b.pinned ? 1 : -1;
-      return b.updatedAt - a.updatedAt;
-    });
-  }, [activeNotes, filter]);
-
-  const handleNew = () => {
-    const id = addNote({});
-    onOpenNote(id);
-  };
-
-  const filterBtn = (label, key) => (
-    <button onClick={() => setFilter(key)} style={{
-      padding: '6px 14px', borderRadius: 99, border: 'none',
-      background: filter === key ? 'var(--green-600)' : 'var(--green-100)',
-      color: filter === key ? 'white' : 'var(--green-700)',
-      fontSize: 13, fontWeight: 600, cursor: 'pointer', minHeight: 34,
-      transition: 'all 0.2s',
-    }}>{label}</button>
-  );
-
-  return (
-    <div style={S.content}>
-      <div style={S.header}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={S.headerTitle}>NoteVault</div>
-            <div style={{ fontSize: 13, opacity: 0.85, marginTop: 2 }}>{activeNotes.length} notes</div>
-          </div>
-          <button onClick={handleNew} style={{
-            ...S.btn, background: 'rgba(255,255,255,0.2)', borderRadius: 12, width: 44, height: 44,
-          }}>
-            <Icons.Plus />
-          </button>
-        </div>
-        <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-          {filterBtn('All', 'all')}
-          {filterBtn('Pinned', 'pinned')}
-          {filterBtn('Favorites', 'favorites')}
-        </div>
-      </div>
-
-      <div style={{ padding: 16 }}>
-        {filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: 40, color: 'var(--gray-400)' }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>📝</div>
-            <div style={{ fontSize: 15, fontWeight: 500 }}>No notes yet</div>
-            <div style={{ fontSize: 13, marginTop: 4 }}>Tap + to create your first note</div>
-          </div>
-        ) : (
-          filtered.map(n => <NoteCard key={n.id} note={n} onClick={() => onOpenNote(n.id)} />)
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ─── Explore Tab ───
-function ExploreTab({ onOpenNote }) {
-  const { notes, notebooks, tags, addNote } = useData();
-  const [view, setView] = useState('search'); // search | stats | templates
-  const [query, setQuery] = useState('');
-  const [filterNotebook, setFilterNotebook] = useState('');
-  const [filterTag, setFilterTag] = useState('');
-
-  const activeNotes = useMemo(() => notes.filter(n => !n.trashed), [notes]);
-
-  const searchResults = useMemo(() => {
-    if (!query && !filterNotebook && !filterTag) return [];
-    return activeNotes.filter(n => {
-      const matchQuery = !query || n.title.toLowerCase().includes(query.toLowerCase()) || stripHtml(n.content).toLowerCase().includes(query.toLowerCase());
-      const matchNb = !filterNotebook || n.notebook === filterNotebook;
-      const matchTag = !filterTag || n.tags.includes(filterTag);
-      return matchQuery && matchNb && matchTag;
-    }).sort((a, b) => b.updatedAt - a.updatedAt);
-  }, [activeNotes, query, filterNotebook, filterTag]);
-
-  // Stats
-  const stats = useMemo(() => {
-    const total = activeNotes.length;
-    const pinned = activeNotes.filter(n => n.pinned).length;
-    const faved = activeNotes.filter(n => n.favorite).length;
-    const trashed = notes.filter(n => n.trashed).length;
-    const totalWords = activeNotes.reduce((sum, n) => sum + stripHtml(n.content).split(/\s+/).filter(Boolean).length, 0);
-    const byNotebook = {};
-    notebooks.forEach(nb => { byNotebook[nb] = activeNotes.filter(n => n.notebook === nb).length; });
-    const byTag = {};
-    tags.forEach(t => { byTag[t] = activeNotes.filter(n => n.tags.includes(t)).length; });
-
-    const today = new Date(); today.setHours(0,0,0,0);
-    const weekAgo = today.getTime() - 7 * 86400000;
-    const thisWeek = activeNotes.filter(n => n.createdAt >= weekAgo).length;
-
-    return { total, pinned, faved, trashed, totalWords, byNotebook, byTag, thisWeek };
-  }, [activeNotes, notes, notebooks, tags]);
-
-  // Templates
-  const templates = [
-    { name: 'Meeting Notes', icon: '📋', content: '<h2>Meeting Notes</h2><p><strong>Date:</strong> </p><p><strong>Attendees:</strong> </p><h3>Agenda</h3><ul><li></li></ul><h3>Discussion</h3><p></p><h3>Action Items</h3><ul><li></li></ul>' },
-    { name: 'Daily Journal', icon: '📓', content: '<h2>Daily Journal</h2><p><strong>Date:</strong> </p><h3>Gratitude</h3><p>Three things I\'m grateful for today:</p><ol><li></li><li></li><li></li></ol><h3>Highlights</h3><p></p><h3>Lessons Learned</h3><p></p>' },
-    { name: 'Project Plan', icon: '🎯', content: '<h2>Project Plan</h2><p><strong>Project:</strong> </p><p><strong>Deadline:</strong> </p><h3>Objective</h3><p></p><h3>Milestones</h3><ol><li></li><li></li><li></li></ol><h3>Resources Needed</h3><ul><li></li></ul>' },
-    { name: 'Reading Notes', icon: '📖', content: '<h2>Reading Notes</h2><p><strong>Book/Article:</strong> </p><p><strong>Author:</strong> </p><h3>Key Ideas</h3><ul><li></li></ul><h3>Quotes</h3><p></p><h3>My Thoughts</h3><p></p>' },
-    { name: 'Decision Matrix', icon: '⚖️', content: '<h2>Decision</h2><p><strong>What I need to decide:</strong> </p><h3>Option A</h3><p><strong>Pros:</strong></p><ul><li></li></ul><p><strong>Cons:</strong></p><ul><li></li></ul><h3>Option B</h3><p><strong>Pros:</strong></p><ul><li></li></ul><p><strong>Cons:</strong></p><ul><li></li></ul><h3>My Choice & Why</h3><p></p>' },
-    { name: 'Weekly Review', icon: '📅', content: '<h2>Weekly Review</h2><p><strong>Week of:</strong> </p><h3>Wins</h3><ul><li></li></ul><h3>Challenges</h3><ul><li></li></ul><h3>Next Week Goals</h3><ol><li></li><li></li><li></li></ol>' },
-  ];
-
-  const handleTemplate = (tpl) => {
-    const id = addNote({ title: tpl.name, content: tpl.content });
-    onOpenNote(id);
-  };
-
-  const tabBtn = (label, key, icon) => (
-    <button onClick={() => setView(key)} style={{
-      flex: 1, padding: '10px 0', border: 'none', borderRadius: 10,
-      background: view === key ? 'var(--green-600)' : 'transparent',
-      color: view === key ? 'white' : 'var(--gray-600)',
-      fontSize: 13, fontWeight: 600, cursor: 'pointer',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-      transition: 'all 0.2s',
-    }}>{icon} {label}</button>
-  );
-
-  const statCard = (label, value, color) => (
-    <div style={{
-      flex: 1, background: color || 'var(--green-50)', borderRadius: 12, padding: 14,
-      textAlign: 'center', minWidth: 0,
-    }}>
-      <div style={{ fontSize: 26, fontWeight: 700, color: 'var(--green-700)', fontFamily: "'Source Serif 4', serif" }}>{value}</div>
-      <div style={{ fontSize: 11, color: 'var(--gray-500)', marginTop: 2, fontWeight: 500 }}>{label}</div>
-    </div>
-  );
-
-  return (
-    <div style={S.content}>
-      <div style={S.header}>
-        <div style={S.headerTitle}>Explore Data</div>
-        <div style={{ fontSize: 13, opacity: 0.85, marginTop: 2 }}>Search, stats & templates</div>
-      </div>
-
-      <div style={{ padding: '12px 16px 0' }}>
-        <div style={{ display: 'flex', gap: 4, background: 'var(--gray-50)', borderRadius: 12, padding: 4 }}>
-          {tabBtn('Search', 'search', <Icons.Search size={16} />)}
-          {tabBtn('Stats', 'stats', <Icons.Chart />)}
-          {tabBtn('Templates', 'templates', <Icons.Template />)}
-        </div>
-      </div>
-
-      {view === 'search' && (
-        <div style={{ padding: 16 }} className="fade-in">
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 10,
-            background: 'var(--gray-50)', borderRadius: 12, padding: '0 14px',
-            border: '2px solid var(--gray-100)',
-          }}>
-            <Icons.Search size={18} />
-            <input value={query} onChange={e => setQuery(e.target.value)}
-              placeholder="Search notes..."
-              style={{
-                border: 'none', background: 'none', flex: 1, padding: '14px 0',
-                fontSize: 15, outline: 'none', color: 'var(--gray-800)',
-              }} />
-            {query && <button onClick={() => setQuery('')} style={{ ...S.btn, width: 32, height: 32, color: 'var(--gray-400)' }}><Icons.Close /></button>}
-          </div>
-
-          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-            <select value={filterNotebook} onChange={e => setFilterNotebook(e.target.value)}
-              style={{
-                flex: 1, padding: '10px 12px', borderRadius: 10, border: '1px solid var(--gray-200)',
-                fontSize: 13, color: filterNotebook ? 'var(--green-700)' : 'var(--gray-500)',
-                background: filterNotebook ? 'var(--green-50)' : 'var(--white)', outline: 'none',
-              }}>
-              <option value="">All Notebooks</option>
-              {notebooks.map(nb => <option key={nb} value={nb}>{nb}</option>)}
-            </select>
-            <select value={filterTag} onChange={e => setFilterTag(e.target.value)}
-              style={{
-                flex: 1, padding: '10px 12px', borderRadius: 10, border: '1px solid var(--gray-200)',
-                fontSize: 13, color: filterTag ? 'var(--green-700)' : 'var(--gray-500)',
-                background: filterTag ? 'var(--green-50)' : 'var(--white)', outline: 'none',
-              }}>
-              <option value="">All Tags</option>
-              {tags.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
-
-          {(query || filterNotebook || filterTag) && (
-            <div style={{ marginTop: 16 }}>
-              <div style={{ fontSize: 13, color: 'var(--gray-500)', marginBottom: 8, fontWeight: 500 }}>
-                {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
-              </div>
-              {searchResults.map(n => <NoteCard key={n.id} note={n} onClick={() => onOpenNote(n.id)} />)}
-              {searchResults.length === 0 && (
-                <div style={{ textAlign: 'center', padding: 30, color: 'var(--gray-400)' }}>
-                  <div style={{ fontSize: 36 }}>🔍</div>
-                  <div style={{ fontSize: 14, marginTop: 8 }}>No matching notes found</div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {!query && !filterNotebook && !filterTag && (
-            <div style={{ textAlign: 'center', padding: 40, color: 'var(--gray-400)' }}>
-              <div style={{ fontSize: 40 }}>🔍</div>
-              <div style={{ fontSize: 14, marginTop: 8 }}>Search across all your notes</div>
-              <div style={{ fontSize: 12, marginTop: 4 }}>Use filters to narrow results</div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {view === 'stats' && (
-        <div style={{ padding: 16 }} className="fade-in">
-          <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
-            {statCard('Total Notes', stats.total)}
-            {statCard('This Week', stats.thisWeek, 'var(--amber-100)')}
-            {statCard('Words', stats.totalWords.toLocaleString(), 'var(--green-100)')}
-          </div>
-          <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
-            {statCard('Pinned', stats.pinned)}
-            {statCard('Favorites', stats.faved, 'var(--amber-100)')}
-            {statCard('Trashed', stats.trashed, 'var(--red-100)')}
-          </div>
-
-          <div style={{ background: 'var(--gray-50)', borderRadius: 14, padding: 16, marginBottom: 12 }}>
-            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 12, color: 'var(--gray-800)' }}>📂 By Notebook</div>
-            {Object.entries(stats.byNotebook).map(([nb, count]) => (
-              <div key={nb} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--gray-100)' }}>
-                <span style={{ fontSize: 14, color: 'var(--gray-700)' }}>{nb}</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: Math.max(4, (count / Math.max(stats.total, 1)) * 100), height: 6, background: 'var(--green-500)', borderRadius: 3, minWidth: 4 }} />
-                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--green-700)', minWidth: 20, textAlign: 'right' }}>{count}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ background: 'var(--gray-50)', borderRadius: 14, padding: 16 }}>
-            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 12, color: 'var(--gray-800)' }}>🏷️ By Tag</div>
-            {Object.entries(stats.byTag).length === 0 && <div style={{ fontSize: 13, color: 'var(--gray-400)' }}>No tags yet</div>}
-            {Object.entries(stats.byTag).map(([tag, count]) => (
-              <div key={tag} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--gray-100)' }}>
-                <span style={{ ...S.tagChip, margin: 0 }}><Icons.Tag />{tag}</span>
-                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--green-700)' }}>{count}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {view === 'templates' && (
-        <div style={{ padding: 16 }} className="fade-in">
-          <div style={{ fontSize: 13, color: 'var(--gray-500)', marginBottom: 12 }}>Tap a template to create a new note</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            {templates.map(tpl => (
-              <button key={tpl.name} onClick={() => handleTemplate(tpl)} style={{
-                background: 'var(--white)', border: '1px solid var(--gray-200)',
-                borderRadius: 14, padding: 20, textAlign: 'center', cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}>
-                <div style={{ fontSize: 32, marginBottom: 8 }}>{tpl.icon}</div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--gray-800)' }}>{tpl.name}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Notebooks Tab (manages notebooks, shows notes by notebook) ───
-function NotebooksTab({ onOpenNote }) {
-  const { notes, notebooks, addNotebook, deleteNotebook } = useData();
-  const [selected, setSelected] = useState(null);
-  const [showAdd, setShowAdd] = useState(false);
-  const [newName, setNewName] = useState('');
-  const activeNotes = useMemo(() => notes.filter(n => !n.trashed), [notes]);
-
-  const handleAdd = () => {
-    if (newName.trim()) { addNotebook(newName.trim()); setNewName(''); setShowAdd(false); }
-  };
-
-  if (selected) {
-    const nbNotes = activeNotes.filter(n => n.notebook === selected).sort((a, b) => b.updatedAt - a.updatedAt);
-    return (
-      <div style={S.content}>
-        <div style={{
-          ...S.header, display: 'flex', alignItems: 'center', gap: 8,
-        }}>
-          <button style={{ ...S.btn, color: 'white' }} onClick={() => setSelected(null)}><Icons.Back /></button>
-          <div>
-            <div style={S.headerTitle}>{selected}</div>
-            <div style={{ fontSize: 13, opacity: 0.85 }}>{nbNotes.length} notes</div>
-          </div>
-        </div>
-        <div style={{ padding: 16 }}>
-          {nbNotes.length === 0 && <div style={{ textAlign: 'center', padding: 40, color: 'var(--gray-400)', fontSize: 14 }}>No notes in this notebook</div>}
-          {nbNotes.map(n => <NoteCard key={n.id} note={n} onClick={() => onOpenNote(n.id)} />)}
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div style={S.content}>
-      <div style={S.header}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={S.headerTitle}>Notebooks</div>
-          <button onClick={() => setShowAdd(!showAdd)} style={{ ...S.btn, background: 'rgba(255,255,255,0.2)', borderRadius: 12 }}>
-            <Icons.Plus />
-          </button>
-        </div>
-      </div>
-      <div style={{ padding: 16 }}>
-        {showAdd && (
-          <div style={{ display: 'flex', gap: 8, marginBottom: 12 }} className="fade-in">
-            <input value={newName} onChange={e => setNewName(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleAdd()}
-              placeholder="Notebook name"
-              autoFocus
-              style={{
-                flex: 1, padding: '12px 14px', borderRadius: 10,
-                border: '2px solid var(--green-300)', outline: 'none', fontSize: 14,
-              }} />
-            <button onClick={handleAdd} style={{ ...S.btnPrimary, borderRadius: 10 }}>Add</button>
-          </div>
-        )}
-        {notebooks.map(nb => {
-          const count = activeNotes.filter(n => n.notebook === nb).length;
-          return (
-            <div key={nb} style={{
-              ...S.card, display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            }} onClick={() => setSelected(nb)}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{
-                  width: 42, height: 42, borderRadius: 10, background: 'var(--green-100)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--green-600)',
-                }}>
-                  <Icons.Notebook />
-                </div>
-                <div>
-                  <div style={{ fontSize: 15, fontWeight: 600 }}>{nb}</div>
-                  <div style={{ fontSize: 12, color: 'var(--gray-500)' }}>{count} notes</div>
-                </div>
-              </div>
-              {nb !== 'Personal' && (
-                <button onClick={(e) => { e.stopPropagation(); if(confirm('Delete this notebook? Notes will move to Personal.')) deleteNotebook(nb); }}
-                  style={{ ...S.btn, color: 'var(--gray-400)', width: 36, height: 36 }}>
-                  <Icons.Trash />
-                </button>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ─── Trash Tab ───
-function TrashTab({ onOpenNote }) {
-  const { notes, restoreNote, deleteNotePermanently, emptyTrash } = useData();
-  const trashed = useMemo(() => notes.filter(n => n.trashed).sort((a, b) => b.updatedAt - a.updatedAt), [notes]);
-
-  return (
-    <div style={S.content}>
-      <div style={S.header}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={S.headerTitle}>Trash</div>
-            <div style={{ fontSize: 13, opacity: 0.85, marginTop: 2 }}>{trashed.length} notes</div>
-          </div>
-          {trashed.length > 0 && (
-            <button onClick={() => { if(confirm('Permanently delete all trashed notes?')) emptyTrash(); }}
-              style={{ fontSize: 13, color: 'white', background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontWeight: 600 }}>
-              Empty Trash
-            </button>
-          )}
-        </div>
-      </div>
-      <div style={{ padding: 16 }}>
-        {trashed.length === 0 && (
-          <div style={{ textAlign: 'center', padding: 40, color: 'var(--gray-400)' }}>
-            <div style={{ fontSize: 48, marginBottom: 8 }}>🗑️</div>
-            <div style={{ fontSize: 15, fontWeight: 500 }}>Trash is empty</div>
-          </div>
-        )}
-        {trashed.map(n => (
-          <div key={n.id} style={S.card} className="fade-in">
-            <div style={S.cardTitle}>{n.title || 'Untitled Note'}</div>
-            <div style={S.cardPreview}>{stripHtml(n.content) || 'No content'}</div>
-            <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-              <button onClick={() => restoreNote(n.id)} style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                padding: '8px 14px', borderRadius: 8, border: '1px solid var(--green-300)',
-                background: 'var(--green-50)', color: 'var(--green-700)',
-                fontSize: 13, fontWeight: 600, cursor: 'pointer',
-              }}><Icons.Restore /> Restore</button>
-              <button onClick={() => { if(confirm('Delete permanently?')) deleteNotePermanently(n.id); }} style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                padding: '8px 14px', borderRadius: 8, border: '1px solid var(--gray-200)',
-                background: 'var(--white)', color: 'var(--red-500)',
-                fontSize: 13, fontWeight: 600, cursor: 'pointer',
-              }}><Icons.DeletePerm /> Delete</button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── Settings Tab ───
-function SettingsTab() {
-  const { exportData, importData, notes, notebooks, tags } = useData();
-  const [importStatus, setImportStatus] = useState('');
-  const fileRef = useRef(null);
-
-  const handleImport = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const success = importData(ev.target.result);
-      setImportStatus(success ? 'Restore successful!' : 'Invalid backup file.');
-      setTimeout(() => setImportStatus(''), 3000);
-    };
-    reader.readAsText(file);
-  };
-
-  const settingRow = (label, value) => (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid var(--gray-100)' }}>
-      <span style={{ fontSize: 14, color: 'var(--gray-700)' }}>{label}</span>
-      <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--green-700)' }}>{value}</span>
-    </div>
-  );
-
-  return (
-    <div style={S.content}>
-      <div style={S.header}>
-        <div style={S.headerTitle}>Settings</div>
-      </div>
-      <div style={{ padding: 16 }}>
-        <div style={{ background: 'var(--gray-50)', borderRadius: 14, padding: 16, marginBottom: 16 }}>
-          <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: 'var(--gray-800)' }}>Overview</div>
-          {settingRow('Total Notes', notes.length)}
-          {settingRow('Notebooks', notebooks.length)}
-          {settingRow('Tags', tags.length)}
-          {settingRow('Active Notes', notes.filter(n => !n.trashed).length)}
-          {settingRow('Trashed', notes.filter(n => n.trashed).length)}
-        </div>
-
-        <div style={{ background: 'var(--gray-50)', borderRadius: 14, padding: 16, marginBottom: 16 }}>
-          <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 12, color: 'var(--gray-800)' }}>Backup & Restore</div>
-          <button onClick={exportData} style={{
-            ...S.btnPrimary, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 10,
-          }}>
-            <Icons.Download /> Download Backup
-          </button>
-          <input type="file" accept=".json" ref={fileRef} onChange={handleImport} style={{ display: 'none' }} />
-          <button onClick={() => fileRef.current.click()} style={{
-            width: '100%', padding: '12px 20px', borderRadius: 10,
-            border: '2px solid var(--green-300)', background: 'var(--green-50)',
-            color: 'var(--green-700)', fontSize: 15, fontWeight: 600,
-            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          }}>
-            <Icons.Upload /> Restore from Backup
-          </button>
-          {importStatus && (
-            <div style={{
-              marginTop: 10, padding: '10px 14px', borderRadius: 8,
-              background: importStatus.includes('successful') ? 'var(--green-100)' : 'var(--red-100)',
-              color: importStatus.includes('successful') ? 'var(--green-700)' : 'var(--red-500)',
-              fontSize: 13, fontWeight: 500, textAlign: 'center',
-            }}>{importStatus}</div>
-          )}
-        </div>
-
-        <div style={{ background: 'var(--gray-50)', borderRadius: 14, padding: 16 }}>
-          <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: 'var(--gray-800)' }}>Manage Tags</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-            {tags.map(t => (
-              <span key={t} style={{ ...S.tagChip, fontSize: 13, padding: '4px 10px' }}>
-                <Icons.Tag />{t}
-                <button onClick={() => { if(confirm(`Delete tag "${t}"?`)) useData().deleteTag(t); }}
-                  style={{ background: 'none', border: 'none', color: 'var(--green-700)', cursor: 'pointer', fontSize: 14, marginLeft: 4, padding: 0 }}>×</button>
-              </span>
-            ))}
-            {tags.length === 0 && <span style={{ fontSize: 13, color: 'var(--gray-400)' }}>No tags created yet</span>}
-          </div>
-        </div>
-
-        <div style={{ textAlign: 'center', marginTop: 32, color: 'var(--gray-400)', fontSize: 12 }}>
-          NoteVault v1.0 · All data stored locally
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Main App ───
-function App() {
-  const [tab, setTab] = useState('home');
-  const [editingNote, setEditingNote] = useState(null);
-
-  const navItem = (key, label, Icon) => (
-    <button onClick={() => { setTab(key); setEditingNote(null); }}
-      style={{
-        flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
-        gap: 3, padding: '8px 0', border: 'none', background: 'none', cursor: 'pointer',
-        color: tab === key ? 'var(--green-600)' : 'var(--gray-400)',
-        transition: 'color 0.2s', minHeight: 44,
-      }}>
-      <Icon />
-      <span style={{ fontSize: 10, fontWeight: 600 }}>{label}</span>
-    </button>
-  );
-
-  return (
-    <div style={{ position: 'relative', minHeight: '100dvh' }}>
-      {tab === 'home' && <HomeTab onOpenNote={setEditingNote} />}
-      {tab === 'explore' && <ExploreTab onOpenNote={setEditingNote} />}
-      {tab === 'notebooks' && <NotebooksTab onOpenNote={setEditingNote} />}
-      {tab === 'trash' && <TrashTab />}
-      {tab === 'settings' && <SettingsTab />}
-
-      {editingNote && <NoteEditor noteId={editingNote} onBack={() => setEditingNote(null)} />}
-
-      {/* Bottom Nav */}
-      <div style={{
-        position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)',
-        width: '100%', maxWidth: 480,
-        background: 'var(--white)',
-        borderTop: '1px solid var(--gray-100)',
-        display: 'flex',
-        paddingBottom: 'calc(6px + var(--safe-bottom))',
-        paddingTop: 6,
-        boxShadow: '0 -2px 10px rgba(0,0,0,0.04)',
-        zIndex: 25,
-      }}>
-        {navItem('home', 'Notes', Icons.Home)}
-        {navItem('explore', 'Explore', Icons.Explore)}
-        {navItem('notebooks', 'Notebooks', Icons.Notebook)}
-        {navItem('trash', 'Trash', Icons.Trash)}
-        {navItem('settings', 'Settings', Icons.Settings)}
-      </div>
-    </div>
-  );
-}
-
-// ─── Mount ───
-try {
-  document.getElementById('loading-fallback').style.display = 'flex';
-  const root = ReactDOM.createRoot(document.getElementById('root'));
-  root.render(
-    <DataProvider>
-      <App />
-    </DataProvider>
-  );
-  document.getElementById('loading-fallback').style.display = 'none';
-} catch (err) {
-  document.getElementById('loading-fallback').style.display = 'none';
-  document.getElementById('error-fallback').style.display = 'flex';
-  document.getElementById('error-msg').textContent = err.message;
-}
-
-// 8-second timeout fallback
-setTimeout(() => {
-  const root = document.getElementById('root');
-  const loading = document.getElementById('loading-fallback');
-  if (loading && loading.style.display !== 'none') {
-    loading.innerHTML = '<p style="color:var(--red-500)">Loading took too long. Try refreshing.</p>';
-  }
-}, 8000);
+<div style={{background:C.card,borderRadius:'16px',padding:'20px',border:`1px solid ${C.border}`,marginBottom:'16px'}}>
+<div style={{textAlign:'center'}}>
+<div style={{fontSize:'44px',fontWeight:'900',color:C.accent,margin:'0 0 8px'}}>{score.pct}%</div>
+<div style={{fontSize:'14px',color:C.sub,marginBottom:'12px'}}>TODAY'S SCORE</div>
+<div style={{height:'8px',background:C.inputBg,borderRadius:'4px',overflow:'hidden',marginBottom:'8px'}}>
+<div style={{height:'100%',width:`${score.pct}%`,background:C.accent,transition:'width 0.3s'}}/>
+</div>
+<div style={{fontSize:'11px',color:C.sub}}>{score.done}/{score.total} tasks complete</div>
+</div>
+</div>
+
+<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px',marginBottom:'16px'}}>
+<div style={{background:C.card,padding:'16px',borderRadius:'12px',border:`1px solid ${C.border}`,textAlign:'center'}}>
+<div style={{fontSize:'32px',marginBottom:'4px'}}>🔥</div>
+<div style={{fontSize:'20px',fontWeight:'800',color:C.accent}}>{currentStreak}</div>
+<div style={{fontSize:'10px',color:C.sub,marginTop:'4px'}}>Streak</div>
+</div>
+<div style={{background:C.card,padding:'16px',borderRadius:'12px',border:`1px solid ${C.border}`,textAlign:'center'}}>
+<div style={{fontSize:'32px',marginBottom:'4px'}}>👑</div>
+<div style={{fontSize:'20px',fontWeight:'800',color:C.orange}}>{bestStreak}</div>
+<div style={{fontSize:'10px',color:C.sub,marginTop:'4px'}}>Best</div>
+</div>
+</div>
+
+<div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'10px',marginBottom:'16px'}}>
+{data.categories.map(cat=>{const cs=getCategoryScore(wd,cat);return(<div key={cat.id} style={{background:C.card,padding:'12px',borderRadius:'12px',border:`1px solid ${C.border}`,textAlign:'center'}}>
+<div style={{fontSize:'24px',marginBottom:'4px'}}>{cat.icon}</div>
+<div style={{fontSize:'12px',fontWeight:'700',color:cat.color}}>{cs.pct}%</div>
+</div>)})}
+</div>
+
+<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px',marginBottom:'16px'}}>
+<button onClick={exportPDF} style={{padding:'12px',background:C.accent,color:C.bg,border:'none',borderRadius:'8px',fontWeight:'700',cursor:'pointer',fontSize:'12px'}}>📥 Export PDF</button>
+<button onClick={()=>setShowSettings(!showSettings)} style={{padding:'12px',background:C.card,border:`1px solid ${C.border}`,color:C.accent,borderRadius:'8px',fontWeight:'700',cursor:'pointer',fontSize:'12px'}}>⏰ Reminder</button>
+</div>
+
+{showSettings&&<div style={{background:C.card,padding:'14px',borderRadius:'12px',border:`1px solid ${C.border}`,marginBottom:'16px'}}>
+<label style={{fontSize:'11px',color:C.sub,fontWeight:'700',display:'block',marginBottom:'8px'}}>Set Daily Reminder Time</label>
+<input type="time" value={reminderTime} onChange={e=>setReminderTime(e.target.value)} style={{width:'100%',padding:'10px',background:C.inputBg,border:`1px solid ${C.border}`,borderRadius:'6px',color:C.text,marginBottom:'8px'}}/>
+<button onClick={()=>{setReminder(reminderTime);setShowSettings(false)}} style={{width:'100%',padding:'10px',background:C.accent,color:C.bg,border:'none',borderRadius:'6px',fontWeight:'700',cursor:'pointer',fontSize:'12px'}}>Save Reminder</button>
+</div>}
+
+<HeatmapView/>
+</div>)}
+
+// ===== TRACKER TAB =====
+function TrackerTab(){
+const{data,selWeek,loaded,toggleTask,setNote}=useD();
+ensureWeek(data,selWeek);
+const wd=data.weeks[selWeek];
+const[editNote,setEditNote]=useState(null);
+const[noteText,setNoteText]=useState('');
+if(!loaded)return<div style={{padding:'20px',textAlign:'center',color:C.sub}}>Loading...</div>;
+return(<div style={{padding:'16px',minHeight:'100vh',backgroundColor:C.bg,paddingBottom:80}}>
+{data.categories.map(cat=>{const cs=getCategoryScore(wd,cat);return(<div key={cat.id} style={{marginBottom:'20px'}}>
+<div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'12px'}}>
+<div style={{display:'flex',alignItems:'center',gap:'8px'}}>
+<span style={{fontSize:'24px'}}>{cat.icon}</span>
+<div>
+<div style={{fontSize:'16px',fontWeight:'700',color:C.text}}>{cat.name}</div>
+<div style={{fontSize:'11px',color:C.sub}}>{cs.done}/{cs.total}</div>
+</div>
+</div>
+<div style={{fontSize:'18px',fontWeight:'800',color:cat.color}}>{cs.pct}%</div>
+</div>
+<div style={{height:'4px',background:C.inputBg,borderRadius:'2px',marginBottom:'12px',overflow:'hidden'}}>
+<div style={{height:'100%',width:`${cs.pct}%`,background:cat.color,transition:'width 0.3s'}}/>
+</div>
+<div style={{background:C.card,borderRadius:'12px',border:`1px solid ${C.border}`,overflow:'hidden'}}>
+<div style={{display:'grid',gridTemplateColumns:'140px '+' 1fr'.repeat(cat.days),gap:'1px',background:C.border}}>
+<div style={{background:C.card,padding:'10px',fontSize:'12px',fontWeight:'600',color:C.sub}}>Task</div>
+{DAYS.slice(0,cat.days).map((d,i)=><div key={d} style={{background:C.card,padding:'10px',textAlign:'center',fontSize:'11px',fontWeight:'600',color:getTodayIndex()===i?C.accent:C.sub}}>{d}</div>)}
+{cat.tasks.map(task=>(
+<React.Fragment key={task}>
+<div style={{background:C.inputBg,padding:'10px',fontSize:'12px',color:C.text,display:'flex',alignItems:'center'}}>
+<div style={{flex:1}}>{task}</div>
+<button onClick={()=>{setEditNote({cat:cat.id,task,day:getTodayIndex()});setNoteText((wd.notes[`${getTodayIndex()}_${cat.id}_${task}`]||''))}} style={{background:'none',border:'none',fontSize:'14px',cursor:'pointer',padding:'0 4px'}}>📝</button>
+</div>
+{DAYS.slice(0,cat.days).map((d,i)=>{const isChecked=(wd.tasks[cat.id][task]||[])[i];return(<div key={d} style={{background:C.inputBg,padding:'8px',textAlign:'center',cursor:'pointer',borderLeft:getTodayIndex()===i?`3px solid ${C.accent}`:'none'}} onClick={()=>toggleTask(cat.id,task,i)}>
+<div style={{width:'32px',height:'32px',borderRadius:'8px',background:isChecked?cat.color:C.bg,border:`2px solid ${isChecked?cat.color:C.border}`,margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'center',transition:'all 0.2s',cursor:'pointer'}}>
+{isChecked?<span style={{color:'#0a0e17',fontWeight:'700'}}>✓</span>:null}
+</div>
+</div>)})}
+</React.Fragment>
+))}
+</div>
+</div>
+</div>)})}
+
+{editNote&&<div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.7)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}} onClick={()=>setEditNote(null)}>
+<div style={{background:C.card,borderRadius:'16px',padding:'20px',width:'90%',maxWidth:'320px',border:`1px solid ${C.border}`}} onClick={e=>e.stopPropagation()}>
+<h3 style={{fontSize:'14px',fontWeight:'700',color:C.text,margin:'0 0 12px'}}>📝 {editNote.task}</h3>
+<textarea style={{width:'100%',height:'100px',background:C.inputBg,border:`1px solid ${C.border}`,borderRadius:'8px',padding:'10px',color:C.text,fontSize:'13px',fontFamily:'inherit',resize:'none',marginBottom:'12px'}} value={noteText} onChange={e=>setNoteText(e.target.value)} placeholder="Add note..."/>
+<div style={{display:'flex',gap:'8px'}}>
+<button onClick={()=>setEditNote(null)} style={{flex:1,padding:'10px',background:C.inputBg,border:`1px solid ${C.border}`,borderRadius:'6px',color:C.sub,cursor:'pointer',fontWeight:'600'}}>Cancel</button>
+<button onClick={()=>{setNote(editNote.day,editNote.cat,editNote.task,noteText);setEditNote(null)}} style={{flex:1,padding:'10px',background:C.accent,border:'none',borderRadius:'6px',color:C.bg,cursor:'pointer',fontWeight:'700'}}>Save</button>
+</div>
+</div>
+</div>}
+</div>)}
+
+// ===== DAILY LOG TAB =====
+function LogTab(){
+const{data,selWeek,loaded,setLog}=useD();
+ensureWeek(data,selWeek);
+const wd=data.weeks[selWeek];
+const[expandedDay,setExpandedDay]=useState(getTodayIndex());
+if(!loaded)return<div style={{padding:'20px',textAlign:'center',color:C.sub}}>Loading...</div>;
+return(<div style={{padding:'16px',minHeight:'100vh',backgroundColor:C.bg,paddingBottom:80}}>
+<div style={{marginBottom:'20px'}}>
+<h2 style={{fontSize:'20px',fontWeight:'700',color:C.text,margin:'0 0 4px'}}>📋 Daily Log</h2>
+<p style={{fontSize:'11px',color:C.sub,margin:0}}>Track mood, energy & notes</p>
+</div>
+
+{DAYS.map((day,idx)=>{const log=wd.logs[idx]||{};const isExpanded=expandedDay===idx;return(<div key={day} style={{marginBottom:'12px',background:C.card,borderRadius:'12px',border:`1px solid ${isExpanded?C.accent:C.border}`,overflow:'hidden',cursor:'pointer'}} onClick={()=>setExpandedDay(isExpanded?-1:idx)}>
+<div style={{padding:'14px',display:'flex',alignItems:'center',justifyContent:'space-between',background:isExpanded?`${C.accent}15`:'transparent'}}>
+<div style={{display:'flex',alignItems:'center',gap:'12px'}}>
+<div style={{fontSize:'16px',fontWeight:'700',color:C.text}}>{day} {getTodayIndex()===idx?<span style={{background:C.accent,color:C.bg,padding:'2px 8px',borderRadius:'12px',fontSize:'9px',fontWeight:'700',marginLeft:'6px'}}>TODAY</span>:null}</div>
+<div style={{fontSize:'24px'}}>{log.mood!==undefined?MOODS[log.mood]:'—'}</div>
+</div>
+<div style={{display:'flex',gap:'8px',alignItems:'center',fontSize:'11px',color:C.sub}}>
+<span>⚡ {log.energy||'—'}</span>
+<span>▼</span>
+</div>
+</div>
+{isExpanded&&<div style={{borderTop:`1px solid ${C.border}`,padding:'14px',background:C.inputBg}}>
+<div style={{marginBottom:'12px'}}>
+<label style={{fontSize:'11px',color:C.sub,fontWeight:'700',display:'block',marginBottom:'6px'}}>😊 MOOD</label>
+<div style={{display:'flex',gap:'6px',flexWrap:'wrap'}}>
+{MOODS.map((m,i)=><button key={i} onClick={()=>setLog(idx,'mood',i)} style={{width:'36px',height:'36px',borderRadius:'8px',border:`2px solid ${log.mood===i?C.accent:C.border}`,background:log.mood===i?`${C.accent}20`:'transparent',fontSize:'18px',cursor:'pointer',transition:'all 0.2s'}}>{m}</button>)}
+</div>
+</div>
+<div style={{marginBottom:'12px'}}>
+<label style={{fontSize:'11px',color:C.sub,fontWeight:'700',display:'block',marginBottom:'6px'}}>⚡ ENERGY (1-10)</label>
+<input type="range" min="0" max="10" value={log.energy||5} onChange={e=>setLog(idx,'energy',parseInt(e.target.value))} style={{width:'100%',cursor:'pointer'}}/>
+<div style={{textAlign:'center',color:C.accent,fontWeight:'700',fontSize:'12px',marginTop:'6px'}}>{log.energy||5}/10</div>
+</div>
+<div>
+<label style={{fontSize:'11px',color:C.sub,fontWeight:'700',display:'block',marginBottom:'6px'}}>📝 NOTE</label>
+<textarea style={{width:'100%',height:'60px',background:C.bg,border:`1px solid ${C.border}`,borderRadius:'6px',padding:'8px',color:C.text,fontSize:'12px',fontFamily:'inherit',resize:'none'}} value={log.note||''} onChange={e=>setLog(idx,'note',e.target.value)} placeholder="Add your note..."/>
+</div>
+</div>}
+</div>)})}
+</div>)}
+
+// ===== GOALS TAB =====
+function GoalsTab(){
+const{data,loaded,addGoal,updateGoal}=useD();
+const[showForm,setShowForm]=useState(false);
+const[formData,setFormData]=useState({name:'',category:'health',target:100,current:0});
+if(!loaded)return<div style={{padding:'20px',textAlign:'center',color:C.sub}}>Loading...</div>;
+return(<div style={{padding:'16px',minHeight:'100vh',backgroundColor:C.bg,paddingBottom:80}}>
+<div style={{marginBottom:'20px'}}>
+<h2 style={{fontSize:'20px',fontWeight:'700',color:C.text,margin:'0 0 4px'}}>🎯 Goals</h2>
+<p style={{fontSize:'11px',color:C.sub,margin:0}}>Track your long-term progress</p>
+</div>
+
+{data.goals.map(goal=>{const progress=Math.round((goal.current/goal.target)*100);return(<div key={goal.id} style={{background:C.card,padding:'14px',borderRadius:'12px',border:`1px solid ${C.border}`,marginBottom:'12px'}}>
+<div style={{display:'flex',justifyContent:'space-between',marginBottom:'8px'}}>
+<div>
+<div style={{fontSize:'14px',fontWeight:'700',color:C.text}}>{goal.name}</div>
+<div style={{fontSize:'10px',color:C.sub,marginTop:'2px'}}>{goal.category}</div>
+</div>
+<div style={{textAlign:'right'}}>
+<div style={{fontSize:'16px',fontWeight:'800',color:C.accent}}>{progress}%</div>
+<div style={{fontSize:'9px',color:C.sub}}>{goal.current}/{goal.target}</div>
+</div>
+</div>
+<div style={{height:'6px',background:C.inputBg,borderRadius:'3px',overflow:'hidden',marginBottom:'8px'}}>
+<div style={{height:'100%',width:`${progress}%`,background:C.accent,transition:'width 0.3s'}}/>
+</div>
+<input type="range" min="0" max={goal.target} value={goal.current} onChange={e=>updateGoal(goal.id,parseInt(e.target.value))} style={{width:'100%',cursor:'pointer'}}/>
+</div>)})}
+
+<button onClick={()=>setShowForm(!showForm)} style={{width:'100%',padding:'12px',border:`1px dashed ${C.accent}`,background:'transparent',borderRadius:'8px',color:C.accent,fontWeight:'700',cursor:'pointer',fontSize:'14px'}}>+ Add Goal</button>
+
+{showForm&&<div style={{background:C.card,padding:'14px',borderRadius:'12px',border:`1px solid ${C.border}`,marginTop:'12px'}}>
+<input style={{width:'100%',padding:'10px',background:C.inputBg,border:`1px solid ${C.border}`,borderRadius:'6px',color:C.text,marginBottom:'10px',fontSize:'13px'}} placeholder="Goal name" value={formData.name} onChange={e=>setFormData({...formData,name:e.target.value})}/>
+<select style={{width:'100%',padding:'10px',background:C.inputBg,border:`1px solid ${C.border}`,borderRadius:'6px',color:C.text,marginBottom:'10px',fontSize:'13px'}} value={formData.category} onChange={e=>setFormData({...formData,category:e.target.value})}>
+<option value="health">🏋️ Health</option>
+<option value="wealth">💎 Wealth</option>
+<option value="happiness">😊 Happiness</option>
+</select>
+<input type="number" style={{width:'100%',padding:'10px',background:C.inputBg,border:`1px solid ${C.border}`,borderRadius:'6px',color:C.text,marginBottom:'10px',fontSize:'13px'}} placeholder="Target amount" value={formData.target} onChange={e=>setFormData({...formData,target:parseInt(e.target.value)})}/>
+<div style={{display:'flex',gap:'8px'}}>
+<button onClick={()=>setShowForm(false)} style={{flex:1,padding:'10px',background:C.inputBg,border:`1px solid ${C.border}`,borderRadius:'6px',color:C.sub,cursor:'pointer',fontWeight:'600'}}>Cancel</button>
+<button onClick={()=>{addGoal(formData);setShowForm(false);setFormData({name:'',category:'health',target:100,current:0})}} style={{flex:1,padding:'10px',background:C.accent,border:'none',borderRadius:'6px',color:C.bg,cursor:'pointer',fontWeight:'700'}}>Add</button>
+</div>
+</div>}
+</div>)}
+
+// ===== ANALYTICS TAB =====
+function AnalyticsTab(){
+const{data,selWeek,loaded}=useD();
+ensureWeek(data,selWeek);
+const wd=data.weeks[selWeek];
+const score=getOverallScore(wd,data.categories);
+const moodCounts={};for(const log of Object.values(wd.logs||{})){if(log.mood!==undefined)moodCounts[log.mood]=(moodCounts[log.mood]||0)+1}
+if(!loaded)return<div style={{padding:'20px',textAlign:'center',color:C.sub}}>Loading...</div>;
+return(<div style={{padding:'16px',minHeight:'100vh',backgroundColor:C.bg,paddingBottom:80}}>
+<div style={{marginBottom:'20px'}}>
+<h2 style={{fontSize:'20px',fontWeight:'700',color:C.text,margin:'0 0 4px'}}>📊 Analytics</h2>
+<p style={{fontSize:'11px',color:C.sub,margin:0}}>Weekly insights & trends</p>
+</div>
+
+<div style={{background:C.card,padding:'16px',borderRadius:'12px',border:`1px solid ${C.border}`,marginBottom:'16px'}}>
+<div style={{fontSize:'12px',color:C.sub,fontWeight:'700',marginBottom:'12px',textTransform:'uppercase'}}>Weekly Score</div>
+<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}>
+<div style={{textAlign:'center'}}>
+<div style={{fontSize:'28px',fontWeight:'900',color:C.accent}}>{score.pct}%</div>
+<div style={{fontSize:'10px',color:C.sub,marginTop:'4px'}}>This Week</div>
+</div>
+<div style={{background:C.inputBg,padding:'12px',borderRadius:'8px',textAlign:'center'}}>
+<div style={{fontSize:'14px',fontWeight:'700',color:C.text}}>{score.done}/{score.total}</div>
+<div style={{fontSize:'10px',color:C.sub,marginTop:'4px'}}>Tasks Done</div>
+</div>
+</div>
+</div>
+
+<div style={{background:C.card,padding:'16px',borderRadius:'12px',border:`1px solid ${C.border}`,marginBottom:'16px'}}>
+<div style={{fontSize:'12px',color:C.sub,fontWeight:'700',marginBottom:'12px',textTransform:'uppercase'}}>Mood Distribution</div>
+<div style={{display:'flex',justifyContent:'space-around',textAlign:'center'}}>
+{MOODS.map((m,i)=><div key={i}>
+<div style={{fontSize:'24px',marginBottom:'4px'}}>{m}</div>
+<div style={{fontSize:'12px',fontWeight:'700',color:C.accent}}>{moodCounts[i]||0}</div>
+</div>)}
+</div>
+</div>
+
+<div style={{background:C.card,padding:'16px',borderRadius:'12px',border:`1px solid ${C.border}`}}>
+<div style={{fontSize:'12px',color:C.sub,fontWeight:'700',marginBottom:'12px',textTransform:'uppercase'}}>Category Breakdown</div>
+{data.categories.map(cat=>{const cs=getCategoryScore(wd,cat);return(<div key={cat.id} style={{marginBottom:'12px'}}>
+<div style={{display:'flex',justifyContent:'space-between',marginBottom:'6px',fontSize:'12px'}}>
+<span style={{color:C.text,fontWeight:'600'}}>{cat.icon} {cat.name}</span>
+<span style={{color:cat.color,fontWeight:'700'}}>{cs.pct}%</span>
+</div>
+<div style={{height:'4px',background:C.inputBg,borderRadius:'2px',overflow:'hidden'}}>
+<div style={{height:'100%',width:`${cs.pct}%`,background:cat.color,transition:'width 0.3s'}}/>
+</div>
+</div>)})}
+</div>
+</div>)}
+
+// ===== MAIN APP =====
+const TABS=[{id:'home',label:'🏠 Home'},{id:'tracker',label:'📊 Tracker'},{id:'log',label:'📋 Log'},{id:'goals',label:'🎯 Goals'},{id:'analytics',label:'📈 Analytics'}];
+function App(){
+const[tab,setTab]=useState('home');
+return(<DP><div style={{minHeight:'100vh',backgroundColor:C.bg,color:C.text,maxWidth:480,margin:'0 auto',position:'relative',display:'flex',flexDirection:'column'}}>
+<div style={{flex:1,overflow:'auto'}}>
+{tab==='home'&&<HomeTab/>}
+{tab==='tracker'&&<TrackerTab/>}
+{tab==='log'&&<LogTab/>}
+{tab==='goals'&&<GoalsTab/>}
+{tab==='analytics'&&<AnalyticsTab/>}
+</div>
+<div style={{position:'fixed',bottom:0,left:'50%',transform:'translateX(-50%)',width:'100%',maxWidth:480,display:'flex',backgroundColor:'#0d1220',borderTop:`1px solid ${C.border}`,paddingBottom:8,zIndex:100}}>
+{TABS.map(t=><button key={t.id} onClick={()=>setTab(t.id)} style={{flex:1,padding:'10px 0',background:'none',border:'none',color:tab===t.id?C.accent:C.sub,fontSize:'12px',fontWeight:tab===t.id?700:500,cursor:'pointer',transition:'color 0.2s'}}>{t.label}</button>)}
+</div>
+</div></DP>)}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
