@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>MX Player - Old Style</title>
+<title>MX Player - Blue Edition</title>
 <style>
 * {
   margin: 0;
@@ -44,11 +44,16 @@ video {
   max-height: 100%;
   width: auto;
   height: auto;
+  transition: transform 0.3s ease;
 }
+
+video.zoom-1 { transform: scale(1); }
+video.zoom-1-2 { transform: scale(1.2); }
+video.zoom-1-5 { transform: scale(1.5); }
 
 .video-no-file {
   text-align: center;
-  color: #888;
+  color: #666;
   font-size: 16px;
 }
 
@@ -58,7 +63,7 @@ video {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
   padding: 40px 16px 16px;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -69,51 +74,54 @@ video {
   opacity: 1;
 }
 
-/* Progress Bar */
+/* BLUE PROGRESS BOX */
 .progress-container {
   margin-bottom: 16px;
   cursor: pointer;
 }
 
-.progress-bar {
+.progress-box {
   width: 100%;
-  height: 3px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 2px;
+  height: 8px;
+  background: rgba(33, 150, 243, 0.2);
+  border-radius: 6px;
   position: relative;
   overflow: hidden;
+  border: 1px solid rgba(33, 150, 243, 0.4);
+  box-shadow: 0 0 8px rgba(33, 150, 243, 0.3);
 }
 
 .progress-fill {
   height: 100%;
-  background: #ff6b00;
+  background: linear-gradient(90deg, #2196F3, #64B5F6);
   width: 0%;
   transition: width 0.1s linear;
+  border-radius: 6px;
+}
+
+.progress-box:hover .progress-handle {
+  opacity: 1;
 }
 
 .progress-handle {
   position: absolute;
-  width: 12px;
-  height: 12px;
-  background: #ff6b00;
+  width: 14px;
+  height: 14px;
+  background: #2196F3;
   border-radius: 50%;
-  top: -4.5px;
+  top: -3px;
   left: 0%;
-  box-shadow: 0 0 8px rgba(255,107,0,0.5);
+  box-shadow: 0 0 12px rgba(33, 150, 243, 0.8);
   opacity: 0;
   transition: opacity 0.3s ease;
-}
-
-.progress-bar:hover .progress-handle {
-  opacity: 1;
 }
 
 .time-display {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  color: #aaa;
-  margin-top: 6px;
+  color: #888;
+  margin-top: 8px;
   font-family: monospace;
 }
 
@@ -133,7 +141,7 @@ video {
 
 .control-right {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -143,6 +151,7 @@ video {
   flex: 1;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 button {
@@ -152,30 +161,32 @@ button {
   font-size: 20px;
   cursor: pointer;
   padding: 8px;
-  border-radius: 50%;
-  transition: background 0.2s ease;
+  border-radius: 6px;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 button:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(33, 150, 243, 0.2);
 }
 
 button:active {
-  background: rgba(255,255,255,0.2);
+  background: rgba(33, 150, 243, 0.4);
 }
 
 .play-btn {
   width: 44px;
   height: 44px;
-  background: rgba(255,107,0,0.2);
-  border: 2px solid #ff6b00;
+  background: rgba(33, 150, 243, 0.3);
+  border: 2px solid #2196F3;
+  font-size: 22px;
 }
 
 .play-btn:hover {
-  background: rgba(255,107,0,0.3);
+  background: rgba(33, 150, 243, 0.5);
+  box-shadow: 0 0 12px rgba(33, 150, 243, 0.6);
 }
 
 /* Sliders */
@@ -183,15 +194,15 @@ button:active {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-width: 140px;
+  min-width: 120px;
 }
 
 input[type="range"] {
-  width: 100px;
+  width: 80px;
   height: 2px;
   -webkit-appearance: none;
   appearance: none;
-  background: rgba(255,255,255,0.2);
+  background: rgba(33, 150, 243, 0.2);
   border-radius: 2px;
   outline: none;
   cursor: pointer;
@@ -202,18 +213,20 @@ input[type="range"]::-webkit-slider-thumb {
   appearance: none;
   width: 10px;
   height: 10px;
-  background: #ff6b00;
+  background: #2196F3;
   border-radius: 50%;
   cursor: pointer;
+  box-shadow: 0 0 6px rgba(33, 150, 243, 0.8);
 }
 
 input[type="range"]::-moz-range-thumb {
   width: 10px;
   height: 10px;
-  background: #ff6b00;
+  background: #2196F3;
   border-radius: 50%;
   cursor: pointer;
   border: none;
+  box-shadow: 0 0 6px rgba(33, 150, 243, 0.8);
 }
 
 .slider-label {
@@ -224,10 +237,10 @@ input[type="range"]::-moz-range-thumb {
 
 /* File Input Section */
 .file-section {
-  background: #1a1a1a;
+  background: #0a0a0a;
   padding: 12px 16px;
-  border-top: 1px solid #333;
-  max-height: 80px;
+  border-top: 1px solid #2196F3;
+  max-height: 100px;
   overflow-y: auto;
 }
 
@@ -235,28 +248,33 @@ input[type="range"]::-moz-range-thumb {
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .file-input-wrapper input[type="file"] {
   display: none;
 }
 
-.file-btn {
-  background: #ff6b00;
-  color: #000;
-  padding: 8px 16px;
+.file-btn, .secondary-btn {
+  background: #2196F3;
+  color: #fff;
+  padding: 8px 14px;
   border-radius: 4px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.file-btn:hover {
-  background: #ff8533;
+.file-btn:hover, .secondary-btn:hover {
+  background: #1976D2;
+  box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
 }
 
 .file-name {
   font-size: 12px;
-  color: #aaa;
+  color: #888;
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
@@ -264,49 +282,40 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .file-clear {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
+  background: rgba(33, 150, 243, 0.2);
+  color: #2196F3;
   padding: 6px 12px;
   border-radius: 4px;
   font-size: 12px;
+  border: 1px solid #2196F3;
 }
 
 .file-clear:hover {
-  background: rgba(255,255,255,0.2);
+  background: rgba(33, 150, 243, 0.4);
 }
 
 /* Info Popup */
 .info-popup {
   position: fixed;
-  bottom: 20px;
+  bottom: 120px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0,0,0,0.9);
-  color: #aaa;
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-size: 12px;
+  background: rgba(33, 150, 243, 0.9);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 13px;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease;
   max-width: 80%;
   text-align: center;
+  border: 1px solid #2196F3;
+  box-shadow: 0 0 12px rgba(33, 150, 243, 0.6);
 }
 
 .info-popup.show {
   opacity: 1;
-}
-
-/* Fullscreen Styles */
-.video-section:fullscreen {
-  width: 100%;
-  height: 100%;
-}
-
-video:fullscreen {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
 }
 
 /* Gesture Indicators */
@@ -333,7 +342,7 @@ video:fullscreen {
   transform: translateY(-50%);
   width: 60px;
   height: 150px;
-  background: rgba(0,0,0,0.7);
+  background: rgba(33, 150, 243, 0.7);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -341,11 +350,12 @@ video:fullscreen {
   justify-content: space-between;
   padding: 10px;
   font-size: 10px;
-  color: #aaa;
+  color: #fff;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: 50;
+  border: 1px solid #2196F3;
 }
 
 .brightness-indicator.show {
@@ -367,7 +377,82 @@ video:fullscreen {
 }
 
 .brightness-bar.active {
-  background: #ff6b00;
+  background: #2196F3;
+}
+
+/* History Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  align-items: flex-end;
+  z-index: 1000;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  width: 100%;
+  background: #0a0a0a;
+  border-top: 2px solid #2196F3;
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 20px;
+  border-radius: 12px 12px 0 0;
+}
+
+.modal-header {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2196F3;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-close {
+  font-size: 24px;
+  cursor: pointer;
+  color: #888;
+}
+
+.history-item {
+  background: rgba(33, 150, 243, 0.1);
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  border-left: 3px solid #2196F3;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.history-item:hover {
+  background: rgba(33, 150, 243, 0.2);
+}
+
+.history-item-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.history-item-time {
+  font-size: 11px;
+  color: #888;
+}
+
+.history-empty {
+  text-align: center;
+  color: #666;
+  padding: 40px 20px;
 }
 
 /* Mobile optimizations */
@@ -377,15 +462,19 @@ video:fullscreen {
   }
   
   .slider-container {
-    min-width: 100px;
+    min-width: 90px;
   }
   
   input[type="range"] {
-    width: 70px;
+    width: 60px;
   }
   
   .file-section {
-    max-height: 60px;
+    max-height: 80px;
+  }
+  
+  .control-center {
+    gap: 4px;
   }
 }
 </style>
@@ -408,8 +497,9 @@ video:fullscreen {
     
     <!-- Controls Overlay -->
     <div class="controls-overlay" id="controlsOverlay">
+      <!-- BLUE PROGRESS BOX -->
       <div class="progress-container" id="progressContainer">
-        <div class="progress-bar" id="progressBar">
+        <div class="progress-box" id="progressBar">
           <div class="progress-fill" id="progressFill"></div>
           <div class="progress-handle" id="progressHandle"></div>
         </div>
@@ -442,7 +532,8 @@ video:fullscreen {
         
         <!-- Right Controls -->
         <div class="control-right">
-          <button id="subtitleBtn" title="Subtitle (Not loaded)">CC</button>
+          <button id="boostBtn" title="Audio Boost +50%">🔊+</button>
+          <button id="zoomBtn" title="Zoom">🔍</button>
           <button id="fullscreenBtn" title="Fullscreen">⛶</button>
         </div>
       </div>
@@ -455,12 +546,24 @@ video:fullscreen {
       <button class="file-btn" onclick="document.getElementById('videoInput').click()">📁 Open File</button>
       <input type="file" id="videoInput" accept="video/*" />
       <span class="file-name" id="fileName">No file selected</span>
+      <button class="secondary-btn" id="historyBtn">📜 History</button>
       <button class="file-clear" id="clearBtn" style="display: none;">Clear</button>
     </div>
   </div>
   
   <!-- Info Popup -->
   <div class="info-popup" id="infoPopup"></div>
+
+  <!-- History Modal -->
+  <div class="modal" id="historyModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>📜 Playback History</span>
+        <span class="modal-close" onclick="document.getElementById('historyModal').classList.remove('show')">✕</span>
+      </div>
+      <div id="historyList"></div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -470,8 +573,9 @@ const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const volumeSlider = document.getElementById('volumeSlider');
 const speedSlider = document.getElementById('speedSlider');
+const boostBtn = document.getElementById('boostBtn');
+const zoomBtn = document.getElementById('zoomBtn');
 const fullscreenBtn = document.getElementById('fullscreenBtn');
-const subtitleBtn = document.getElementById('subtitleBtn');
 const progressBar = document.getElementById('progressBar');
 const progressFill = document.getElementById('progressFill');
 const progressHandle = document.getElementById('progressHandle');
@@ -486,6 +590,9 @@ const noFileText = document.getElementById('noFileText');
 const gestureIndicator = document.getElementById('gestureIndicator');
 const brightnessIndicator = document.getElementById('brightnessIndicator');
 const infoPopup = document.getElementById('infoPopup');
+const historyBtn = document.getElementById('historyBtn');
+const historyModal = document.getElementById('historyModal');
+const historyList = document.getElementById('historyList');
 
 // State Variables
 let hideControlsTimeout;
@@ -494,8 +601,9 @@ let lastTapTime = 0;
 let lastTapX = 0;
 let touchStartY = 0;
 let touchStartX = 0;
-let isVolumeDrag = false;
-let isBrightnessDrag = false;
+let isAudioBoosted = false;
+let zoomLevel = 0;
+let playbackHistory = JSON.parse(localStorage.getItem('videoHistory')) || [];
 
 // ===== FORMAT TIME =====
 function formatTime(seconds) {
@@ -517,6 +625,42 @@ function showInfo(text) {
   setTimeout(() => infoPopup.classList.remove('show'), 2000);
 }
 
+// ===== PLAYBACK HISTORY =====
+function addToHistory(fileName) {
+  const entry = {
+    id: Date.now(),
+    name: fileName,
+    date: new Date().toLocaleString(),
+    timestamp: new Date().getTime()
+  };
+  
+  playbackHistory = playbackHistory.filter(item => item.name !== fileName);
+  playbackHistory.unshift(entry);
+  playbackHistory = playbackHistory.slice(0, 50);
+  
+  localStorage.setItem('videoHistory', JSON.stringify(playbackHistory));
+  updateHistoryUI();
+}
+
+function updateHistoryUI() {
+  if (playbackHistory.length === 0) {
+    historyList.innerHTML = '<div class="history-empty">No playback history</div>';
+    return;
+  }
+  
+  historyList.innerHTML = playbackHistory.map(item => `
+    <div class="history-item" onclick="playFromHistory('${item.name}')">
+      <div class="history-item-title">📁 ${item.name}</div>
+      <div class="history-item-time">${item.date}</div>
+    </div>
+  `).join('');
+}
+
+function playFromHistory(fileName) {
+  alert('Select this file from device:\n' + fileName);
+  historyModal.classList.remove('show');
+}
+
 // ===== FILE SELECTION =====
 videoInput.addEventListener('change', (e) => {
   const file = e.target.files[0];
@@ -526,7 +670,10 @@ videoInput.addEventListener('change', (e) => {
     fileNameEl.textContent = file.name;
     clearBtn.style.display = 'block';
     noFileText.style.display = 'none';
-    showInfo('Video loaded: ' + file.name);
+    addToHistory(file.name);
+    showInfo('✓ Video loaded: ' + file.name);
+    isAudioBoosted = false;
+    boostBtn.style.opacity = '1';
   }
 });
 
@@ -577,13 +724,48 @@ nextBtn.addEventListener('click', () => {
 
 // ===== VOLUME CONTROL =====
 volumeSlider.addEventListener('input', (e) => {
-  video.volume = e.target.value / 100;
+  let vol = e.target.value / 100;
+  
+  if (isAudioBoosted) {
+    vol = Math.min(1, vol * 1.5);
+  }
+  
+  video.volume = vol;
+});
+
+// ===== AUDIO BOOST =====
+boostBtn.addEventListener('click', () => {
+  isAudioBoosted = !isAudioBoosted;
+  
+  let vol = volumeSlider.value / 100;
+  if (isAudioBoosted) {
+    vol = Math.min(1, vol * 1.5);
+    boostBtn.style.opacity = '0.5';
+    boostBtn.style.textShadow = '0 0 10px rgba(33, 150, 243, 0.8)';
+    showInfo('🔊 Audio Boost: ON (+50%)');
+  } else {
+    boostBtn.style.opacity = '1';
+    boostBtn.style.textShadow = 'none';
+    showInfo('🔊 Audio Boost: OFF');
+  }
+  
+  video.volume = vol;
 });
 
 // ===== SPEED CONTROL =====
 speedSlider.addEventListener('input', (e) => {
   video.playbackRate = parseFloat(e.target.value);
   showInfo(`Speed: ${e.target.value}x`);
+});
+
+// ===== VIDEO ZOOM =====
+zoomBtn.addEventListener('click', () => {
+  zoomLevel = (zoomLevel + 1) % 3;
+  const zoomLevels = ['zoom-1', 'zoom-1-2', 'zoom-1-5'];
+  const zoomTexts = ['100%', '120%', '150%'];
+  
+  video.className = zoomLevels[zoomLevel];
+  showInfo(`🔍 Zoom: ${zoomTexts[zoomLevel]}`);
 });
 
 // ===== FULLSCREEN =====
@@ -595,6 +777,12 @@ fullscreenBtn.addEventListener('click', () => {
   } else {
     document.exitFullscreen();
   }
+});
+
+// ===== HISTORY BUTTON =====
+historyBtn.addEventListener('click', () => {
+  updateHistoryUI();
+  historyModal.classList.add('show');
 });
 
 // ===== PROGRESS BAR CLICK =====
@@ -625,32 +813,24 @@ videoSection.addEventListener('mouseenter', () => {
 });
 
 // ===== TOUCH CONTROLS =====
-let touchStartTime = 0;
-
 videoSection.addEventListener('touchstart', (e) => {
   touchStartY = e.touches[0].clientY;
   touchStartX = e.touches[0].clientX;
-  touchStartTime = Date.now();
   
-  // Double tap detection
   const now = Date.now();
   const doubleTapDelay = 300;
   
   if (now - lastTapTime < doubleTapDelay && Math.abs(e.touches[0].clientX - lastTapX) < 50) {
-    // Double tap detected
     const videoSectionWidth = videoSection.offsetWidth;
     const doubleTapX = e.touches[0].clientX;
     
     if (doubleTapX < videoSectionWidth / 3) {
-      // Left side - go back
       video.currentTime = Math.max(0, video.currentTime - 10);
       gestureIndicator.textContent = '⏮ -10s';
     } else if (doubleTapX > (videoSectionWidth * 2) / 3) {
-      // Right side - go forward
       video.currentTime = Math.min(video.duration, video.currentTime + 10);
       gestureIndicator.textContent = '⏭ +10s';
     } else {
-      // Center - play/pause
       if (video.paused) {
         video.play();
       } else {
@@ -675,14 +855,12 @@ videoSection.addEventListener('touchmove', (e) => {
   const deltaY = touchStartY - currentY;
   const deltaX = currentX - touchStartX;
   
-  // Vertical swipe - brightness control
   if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 20) {
     e.preventDefault();
     const brightnessChange = (deltaY / videoSection.offsetHeight) * 50;
     videoBrightness = Math.max(0, Math.min(200, videoBrightness + brightnessChange));
     video.style.filter = `brightness(${videoBrightness}%)`;
     
-    // Show brightness indicator
     const bars = document.getElementById('brightnessBars');
     const activeCount = Math.ceil((videoBrightness / 200) * 10);
     bars.innerHTML = '';
@@ -731,16 +909,14 @@ document.addEventListener('keydown', (e) => {
       video.volume = video.volume === 0 ? 0.5 : 0;
       volumeSlider.value = video.volume * 100;
       break;
+    case 'z':
+      zoomBtn.click();
+      break;
+    case 'b':
+      boostBtn.click();
+      break;
   }
 });
-
-// ===== MOBILE ADJUSTMENTS =====
-if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-  // Mobile specific adjustments
-  videoSection.addEventListener('dblclick', (e) => {
-    e.preventDefault();
-  });
-}
 
 // Initialize brightness bars
 for (let i = 0; i < 10; i++) {
@@ -749,7 +925,10 @@ for (let i = 0; i < 10; i++) {
   document.getElementById('brightnessBars').appendChild(bar);
 }
 
-console.log('🎬 MX Player ready!\nKeyboard: SPACE=Play, ← →=Skip, ↑ ↓=Volume, F=Fullscreen, M=Mute');
+// Load history on startup
+updateHistoryUI();
+
+console.log('🎬 MX Player Blue Edition Ready!\nKeyboard: SPACE=Play, Z=Zoom, B=Boost, F=Fullscreen, ← →=Skip, ↑ ↓=Volume, M=Mute');
 </script>
 
 </body>
