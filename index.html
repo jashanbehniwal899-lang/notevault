@@ -57,6 +57,71 @@ video.zoom-1-5 { transform: scale(1.5); }
   font-size: 16px;
 }
 
+/* Resume Popup */
+.resume-popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(10, 10, 10, 0.95);
+  border: 2px solid #2196F3;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  z-index: 100;
+  display: none;
+  min-width: 280px;
+}
+
+.resume-popup.show {
+  display: block;
+}
+
+.resume-popup h3 {
+  color: #2196F3;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.resume-popup p {
+  color: #aaa;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.resume-popup-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.resume-popup-buttons button {
+  background: #2196F3;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.resume-popup-buttons button:hover {
+  background: #1976D2;
+  box-shadow: 0 0 12px rgba(33, 150, 243, 0.6);
+}
+
+.resume-popup-buttons button.secondary {
+  background: rgba(33, 150, 243, 0.2);
+  color: #2196F3;
+  border: 1px solid #2196F3;
+}
+
+.resume-popup-buttons button.secondary:hover {
+  background: rgba(33, 150, 243, 0.4);
+}
+
 /* Controls Overlay */
 .controls-overlay {
   position: absolute;
@@ -97,6 +162,10 @@ video.zoom-1-5 { transform: scale(1.5); }
   width: 0%;
   transition: width 0.1s linear;
   border-radius: 6px;
+}
+
+.progress-fill:hover {
+  background: linear-gradient(90deg, #64B5F6, #90CAF9);
 }
 
 .progress-box:hover .progress-handle {
@@ -240,7 +309,7 @@ input[type="range"]::-moz-range-thumb {
   background: #0a0a0a;
   padding: 12px 16px;
   border-top: 1px solid #2196F3;
-  max-height: 100px;
+  max-height: 120px;
   overflow-y: auto;
 }
 
@@ -249,6 +318,7 @@ input[type="range"]::-moz-range-thumb {
   gap: 10px;
   align-items: center;
   flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
 .file-input-wrapper input[type="file"] {
@@ -288,16 +358,68 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 4px;
   font-size: 12px;
   border: 1px solid #2196F3;
+  cursor: pointer;
 }
 
 .file-clear:hover {
   background: rgba(33, 150, 243, 0.4);
 }
 
+/* Playlist */
+.playlist-container {
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.playlist-item {
+  background: rgba(33, 150, 243, 0.1);
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  cursor: pointer;
+  border-left: 3px solid #2196F3;
+  transition: all 0.2s ease;
+}
+
+.playlist-item:hover {
+  background: rgba(33, 150, 243, 0.2);
+}
+
+.playlist-item.active {
+  background: rgba(33, 150, 243, 0.3);
+  border-left: 3px solid #64B5F6;
+}
+
+.playlist-item-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fff;
+}
+
+.playlist-item-remove {
+  background: rgba(255, 107, 107, 0.3);
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.playlist-item-remove:hover {
+  background: rgba(255, 107, 107, 0.5);
+}
+
 /* Info Popup */
 .info-popup {
   position: fixed;
-  bottom: 120px;
+  bottom: 150px;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(33, 150, 243, 0.9);
@@ -470,7 +592,7 @@ input[type="range"]::-moz-range-thumb {
   }
   
   .file-section {
-    max-height: 80px;
+    max-height: 100px;
   }
   
   .control-center {
@@ -486,6 +608,16 @@ input[type="range"]::-moz-range-thumb {
   <div class="video-section" id="videoSection">
     <video id="videoPlayer"></video>
     <div class="video-no-file" id="noFileText">📁 Select a video file to start</div>
+    
+    <!-- Resume Popup -->
+    <div class="resume-popup" id="resumePopup">
+      <h3>▶️ Resume Video?</h3>
+      <p id="resumeTime"></p>
+      <div class="resume-popup-buttons">
+        <button onclick="resumeVideo()">Resume</button>
+        <button class="secondary" onclick="startFromBeginning()">Start from Beginning</button>
+      </div>
+    </div>
     
     <!-- Gesture Indicators -->
     <div class="gesture-indicator" id="gestureIndicator"></div>
@@ -510,28 +642,32 @@ input[type="range"]::-moz-range-thumb {
       </div>
       
       <div class="controls-buttons">
-        <!-- Left Controls -->
+        <!-- Left Controls: Volume & Brightness -->
         <div class="control-left">
-          <button id="prevBtn" title="Previous 10s">⏮</button>
-          <button id="playBtn" class="play-btn" title="Play/Pause">▶</button>
-          <button id="nextBtn" title="Next 10s">⏭</button>
-        </div>
-        
-        <!-- Center Controls -->
-        <div class="control-center">
           <div class="slider-container">
             <span class="slider-label">🔊</span>
             <input type="range" id="volumeSlider" min="0" max="100" value="100" title="Volume">
           </div>
           
           <div class="slider-container">
-            <span class="slider-label">⚡</span>
-            <input type="range" id="speedSlider" min="0.5" max="2" step="0.25" value="1" title="Speed">
+            <span class="slider-label">☀️</span>
+            <input type="range" id="brightnessSlider" min="0" max="200" value="100" title="Brightness">
           </div>
+        </div>
+        
+        <!-- Center Controls: Play/Pause -->
+        <div class="control-center">
+          <button id="prevBtn" title="-10s">-10</button>
+          <button id="playBtn" class="play-btn" title="Play/Pause">▶</button>
+          <button id="nextBtn" title="+10s">+10</button>
         </div>
         
         <!-- Right Controls -->
         <div class="control-right">
+          <div class="slider-container">
+            <span class="slider-label">⚡</span>
+            <input type="range" id="speedSlider" min="0.5" max="2" step="0.25" value="1" title="Speed">
+          </div>
           <button id="boostBtn" title="Audio Boost +50%">🔊+</button>
           <button id="zoomBtn" title="Zoom">🔍</button>
           <button id="fullscreenBtn" title="Fullscreen">⛶</button>
@@ -543,12 +679,14 @@ input[type="range"]::-moz-range-thumb {
   <!-- File Input Section -->
   <div class="file-section">
     <div class="file-input-wrapper">
-      <button class="file-btn" onclick="document.getElementById('videoInput').click()">📁 Open File</button>
-      <input type="file" id="videoInput" accept="video/*" />
-      <span class="file-name" id="fileName">No file selected</span>
+      <button class="file-btn" onclick="document.getElementById('videoInput').click()">📁 Add Video</button>
+      <input type="file" id="videoInput" accept="video/*" multiple />
       <button class="secondary-btn" id="historyBtn">📜 History</button>
-      <button class="file-clear" id="clearBtn" style="display: none;">Clear</button>
+      <button class="file-clear" id="clearBtn" style="display: none;">Clear All</button>
     </div>
+    
+    <!-- Playlist -->
+    <div class="playlist-container" id="playlistContainer"></div>
   </div>
   
   <!-- Info Popup -->
@@ -572,6 +710,7 @@ const playBtn = document.getElementById('playBtn');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const volumeSlider = document.getElementById('volumeSlider');
+const brightnessSlider = document.getElementById('brightnessSlider');
 const speedSlider = document.getElementById('speedSlider');
 const boostBtn = document.getElementById('boostBtn');
 const zoomBtn = document.getElementById('zoomBtn');
@@ -583,7 +722,6 @@ const currentTimeEl = document.getElementById('currentTime');
 const durationEl = document.getElementById('duration');
 const controlsOverlay = document.getElementById('controlsOverlay');
 const videoSection = document.getElementById('videoSection');
-const fileNameEl = document.getElementById('fileName');
 const clearBtn = document.getElementById('clearBtn');
 const videoInput = document.getElementById('videoInput');
 const noFileText = document.getElementById('noFileText');
@@ -593,6 +731,8 @@ const infoPopup = document.getElementById('infoPopup');
 const historyBtn = document.getElementById('historyBtn');
 const historyModal = document.getElementById('historyModal');
 const historyList = document.getElementById('historyList');
+const playlistContainer = document.getElementById('playlistContainer');
+const resumePopup = document.getElementById('resumePopup');
 
 // State Variables
 let hideControlsTimeout;
@@ -604,6 +744,10 @@ let touchStartX = 0;
 let isAudioBoosted = false;
 let zoomLevel = 0;
 let playbackHistory = JSON.parse(localStorage.getItem('videoHistory')) || [];
+let playlist = [];
+let currentPlaylistIndex = -1;
+let resumeData = JSON.parse(localStorage.getItem('resumeData')) || {};
+let shouldShowResumePopup = true;
 
 // ===== FORMAT TIME =====
 function formatTime(seconds) {
@@ -623,6 +767,48 @@ function showInfo(text) {
   infoPopup.textContent = text;
   infoPopup.classList.add('show');
   setTimeout(() => infoPopup.classList.remove('show'), 2000);
+}
+
+// ===== RESUME FEATURE =====
+function savePlaybackPosition() {
+  if (currentPlaylistIndex >= 0 && playlist[currentPlaylistIndex]) {
+    const fileName = playlist[currentPlaylistIndex].name;
+    resumeData[fileName] = {
+      time: video.currentTime,
+      duration: video.duration,
+      timestamp: Date.now()
+    };
+    localStorage.setItem('resumeData', JSON.stringify(resumeData));
+  }
+}
+
+function checkResumePosition(fileName) {
+  if (resumeData[fileName] && shouldShowResumePopup) {
+    const data = resumeData[fileName];
+    const resumeTime = formatTime(data.time);
+    document.getElementById('resumeTime').textContent = `Resume from ${resumeTime}?`;
+    resumePopup.classList.add('show');
+    shouldShowResumePopup = false;
+    return true;
+  }
+  return false;
+}
+
+function resumeVideo() {
+  if (currentPlaylistIndex >= 0 && playlist[currentPlaylistIndex]) {
+    const fileName = playlist[currentPlaylistIndex].name;
+    if (resumeData[fileName]) {
+      video.currentTime = resumeData[fileName].time;
+      video.play();
+      resumePopup.classList.remove('show');
+    }
+  }
+}
+
+function startFromBeginning() {
+  video.currentTime = 0;
+  video.play();
+  resumePopup.classList.remove('show');
 }
 
 // ===== PLAYBACK HISTORY =====
@@ -649,41 +835,113 @@ function updateHistoryUI() {
   }
   
   historyList.innerHTML = playbackHistory.map(item => `
-    <div class="history-item" onclick="playFromHistory('${item.name}')">
+    <div class="history-item" onclick="loadFromHistory('${item.name}')">
       <div class="history-item-title">📁 ${item.name}</div>
       <div class="history-item-time">${item.date}</div>
     </div>
   `).join('');
 }
 
-function playFromHistory(fileName) {
-  alert('Select this file from device:\n' + fileName);
-  historyModal.classList.remove('show');
+function loadFromHistory(fileName) {
+  const fileItem = playlist.find(f => f.name === fileName);
+  if (fileItem) {
+    loadVideo(fileItem);
+    historyModal.classList.remove('show');
+  }
+}
+
+// ===== PLAYLIST MANAGEMENT =====
+function addToPlaylist(files) {
+  for (let file of files) {
+    const url = URL.createObjectURL(file);
+    playlist.push({ name: file.name, url: url });
+  }
+  updatePlaylistUI();
+  
+  if (playlist.length > 0 && currentPlaylistIndex === -1) {
+    loadVideo(playlist[0]);
+  }
+}
+
+function updatePlaylistUI() {
+  playlistContainer.innerHTML = playlist.map((item, idx) => `
+    <div class="playlist-item ${idx === currentPlaylistIndex ? 'active' : ''}" onclick="loadPlaylistItem(${idx})">
+      <span class="playlist-item-name">${idx + 1}. ${item.name}</span>
+      <button class="playlist-item-remove" onclick="event.stopPropagation(); removeFromPlaylist(${idx})">Remove</button>
+    </div>
+  `).join('');
+  
+  if (playlist.length > 0) {
+    clearBtn.style.display = 'block';
+  }
+}
+
+function loadPlaylistItem(idx) {
+  savePlaybackPosition();
+  currentPlaylistIndex = idx;
+  shouldShowResumePopup = true;
+  loadVideo(playlist[idx]);
+  updatePlaylistUI();
+}
+
+function loadVideo(item) {
+  video.src = item.url;
+  noFileText.style.display = 'none';
+  addToHistory(item.name);
+  showInfo('✓ Playing: ' + item.name);
+  
+  // Check for resume
+  setTimeout(() => {
+    if (checkResumePosition(item.name)) {
+      // Resume popup will show
+    }
+  }, 500);
+  
+  isAudioBoosted = false;
+  boostBtn.style.opacity = '1';
+  zoomLevel = 0;
+  video.className = 'zoom-1';
+}
+
+function removeFromPlaylist(idx) {
+  if (confirm(`Remove ${playlist[idx].name}?`)) {
+    playlist.splice(idx, 1);
+    if (currentPlaylistIndex === idx) {
+      if (playlist.length > 0) {
+        loadPlaylistItem(0);
+      } else {
+        video.src = '';
+        noFileText.style.display = 'block';
+        currentPlaylistIndex = -1;
+      }
+    } else if (currentPlaylistIndex > idx) {
+      currentPlaylistIndex--;
+    }
+    updatePlaylistUI();
+  }
+}
+
+function clearPlaylist() {
+  if (confirm('Clear entire playlist?')) {
+    playlist = [];
+    currentPlaylistIndex = -1;
+    video.src = '';
+    noFileText.style.display = 'block';
+    clearBtn.style.display = 'none';
+    updatePlaylistUI();
+  }
 }
 
 // ===== FILE SELECTION =====
 videoInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const url = URL.createObjectURL(file);
-    video.src = url;
-    fileNameEl.textContent = file.name;
-    clearBtn.style.display = 'block';
-    noFileText.style.display = 'none';
-    addToHistory(file.name);
-    showInfo('✓ Video loaded: ' + file.name);
-    isAudioBoosted = false;
-    boostBtn.style.opacity = '1';
+  const files = Array.from(e.target.files);
+  if (files.length > 0) {
+    addToPlaylist(files);
+    videoInput.value = '';
   }
 });
 
-clearBtn.addEventListener('click', () => {
-  video.src = '';
-  fileNameEl.textContent = 'No file selected';
-  clearBtn.style.display = 'none';
-  noFileText.style.display = 'block';
-  videoInput.value = '';
-});
+clearBtn.addEventListener('click', clearPlaylist);
 
 // ===== VIDEO EVENTS =====
 video.addEventListener('loadedmetadata', () => {
@@ -691,14 +949,24 @@ video.addEventListener('loadedmetadata', () => {
 });
 
 video.addEventListener('timeupdate', () => {
+  savePlaybackPosition();
   const percent = (video.currentTime / video.duration) * 100;
   progressFill.style.width = percent + '%';
   progressHandle.style.left = percent + '%';
   currentTimeEl.textContent = formatTime(video.currentTime);
 });
 
+video.addEventListener('ended', () => {
+  if (currentPlaylistIndex < playlist.length - 1) {
+    loadPlaylistItem(currentPlaylistIndex + 1);
+  } else {
+    playBtn.textContent = '▶';
+  }
+});
+
 // ===== PLAY/PAUSE =====
 playBtn.addEventListener('click', () => {
+  if (video.src === '') return;
   if (video.paused) {
     video.play();
     playBtn.textContent = '⏸';
@@ -713,11 +981,13 @@ video.addEventListener('pause', () => { playBtn.textContent = '▶'; });
 
 // ===== SKIP BUTTONS =====
 prevBtn.addEventListener('click', () => {
+  if (video.src === '') return;
   video.currentTime = Math.max(0, video.currentTime - 10);
   showInfo('⏮ -10s');
 });
 
 nextBtn.addEventListener('click', () => {
+  if (video.src === '') return;
   video.currentTime = Math.min(video.duration, video.currentTime + 10);
   showInfo('⏭ +10s');
 });
@@ -733,8 +1003,16 @@ volumeSlider.addEventListener('input', (e) => {
   video.volume = vol;
 });
 
+// ===== BRIGHTNESS CONTROL =====
+brightnessSlider.addEventListener('input', (e) => {
+  videoBrightness = parseInt(e.target.value);
+  video.style.filter = `brightness(${videoBrightness}%)`;
+  showInfo(`☀️ Brightness: ${videoBrightness}%`);
+});
+
 // ===== AUDIO BOOST =====
 boostBtn.addEventListener('click', () => {
+  if (video.src === '') return;
   isAudioBoosted = !isAudioBoosted;
   
   let vol = volumeSlider.value / 100;
@@ -754,12 +1032,14 @@ boostBtn.addEventListener('click', () => {
 
 // ===== SPEED CONTROL =====
 speedSlider.addEventListener('input', (e) => {
+  if (video.src === '') return;
   video.playbackRate = parseFloat(e.target.value);
   showInfo(`Speed: ${e.target.value}x`);
 });
 
 // ===== VIDEO ZOOM =====
 zoomBtn.addEventListener('click', () => {
+  if (video.src === '') return;
   zoomLevel = (zoomLevel + 1) % 3;
   const zoomLevels = ['zoom-1', 'zoom-1-2', 'zoom-1-5'];
   const zoomTexts = ['100%', '120%', '150%'];
@@ -770,6 +1050,7 @@ zoomBtn.addEventListener('click', () => {
 
 // ===== FULLSCREEN =====
 fullscreenBtn.addEventListener('click', () => {
+  if (video.src === '') return;
   if (!document.fullscreenElement) {
     videoSection.requestFullscreen().catch(err => {
       console.error('Fullscreen error:', err);
@@ -787,6 +1068,7 @@ historyBtn.addEventListener('click', () => {
 
 // ===== PROGRESS BAR CLICK =====
 progressBar.addEventListener('click', (e) => {
+  if (video.src === '') return;
   const rect = progressBar.getBoundingClientRect();
   const percent = (e.clientX - rect.left) / rect.width;
   video.currentTime = percent * video.duration;
@@ -814,6 +1096,7 @@ videoSection.addEventListener('mouseenter', () => {
 
 // ===== TOUCH CONTROLS =====
 videoSection.addEventListener('touchstart', (e) => {
+  if (!video.src) return;
   touchStartY = e.touches[0].clientY;
   touchStartX = e.touches[0].clientX;
   
@@ -927,8 +1210,9 @@ for (let i = 0; i < 10; i++) {
 
 // Load history on startup
 updateHistoryUI();
+updatePlaylistUI();
 
-console.log('🎬 MX Player Blue Edition Ready!\nKeyboard: SPACE=Play, Z=Zoom, B=Boost, F=Fullscreen, ← →=Skip, ↑ ↓=Volume, M=Mute');
+console.log('🎬 MX Player Blue Edition with Resume & Playlist Ready!\nFeatures: Auto-Resume from last position, Multiple videos playlist, Auto-play next video');
 </script>
 
 </body>
